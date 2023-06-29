@@ -1,21 +1,3 @@
-/*
-Observation rules
-1 result length range - should be pattern's length + 1
-2 each number can be only used once - need to track e.g Set
-3 return the lexicographically smallest possible string num - always try the number from 1 to n order
-4 follow the rule for I/D
-*/
-/*
-Thought - backtracking - try all the scenarios from order 1 to n and follow above rules
-1 start the 1st char and try it from 1 to need
-2 for I, each time we look for the char from 1 to n, then we can make sure we keep the lexicographically order and no gap between numbers/chars
-3 for D, we look for a smaller number than previous, only thing need to do is "increase the previous number" 
-	- how? just redo/remove/backtracking the previous number and make it bigger. Not big enough? let it be bigger thru for loop(i to n)
-	- how to do the backtracking. just return to finish current function call and back to previous number, and let previous function go to the next loop of the for iteration
-*/
-
-// TC: at each index, we have n choice and we have n numbers, so it is n^n
-// SC: used set is n, result is n and recursion call stack is n so the total is 3n
 class Solution {
     Set<Integer> used; // for track duplication
     String res; // for result
