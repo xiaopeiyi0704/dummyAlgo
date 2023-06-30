@@ -1,0 +1,53 @@
+/*
+topological sort + BFS(priority queue)
+1 to use topologic, what we really care is how to build the graph(will cost more time explain this)
+  "I" means increase, which from a smaller to a bigger number. "D" means decrease, which from a bigger number to a smaller number.
+  what we can do here: if "I", then number -> number + 1. if "D", then number + 1 -> number. let's test it out.
+  e.g III 1->2->3->4 e.g IDI 1->2<-3->4 e.g DDD 1<-2<-3<-4
+  by checking above example we get the answer 1234, 1324 and 4321. Seems like we build the graph, but how do we get the real answer based on the graph? -topological sort + BFS
+2 just like the course schedule(canFinish) question, we check the indegree for each number, we use the number has 0 indegree first(based on the graph we can get the indegree for each number)
+3 what about two or more numbers have 0 indegree at the time? To keep the lexicographical order, we use the smallest number of the numbers that have 0 indegree. 
+  we use priority queue to track the "smallest number of the numbers that have 0 indegree".
+*/
+// TC : build graph n(n + n + n), PQ nlogk, so total is n + nlogk 
+// SC : graph n, indegree n, pq n, total is 3n
+class Solution {
+    public String smallestNumber(String pattern) {
+		int n = pattern.length() + 1; //result is pattern length + 1
+		List<Integer>[] graph = new List[n + 1]; //since array is 0-indexed, so need one more
+		for (int i = 0; i < n + 1; i++) {
+			graph[i] = new ArrayList<Integer>();
+		}
+		int num = 1;
+		int[] indegree = new int[n + 1]; //since array is 0-indexed, so need one more
+		for (char ch: pattern.toCharArray()) { // build graph direction while calculating indegree for each num
+			if (ch == 'I') {
+				graph[num].add(num + 1); 
+				indegree[num + 1]++;
+			} else {
+				graph[num + 1].add(num);
+				indegree[num]++;
+			}
+			num++;
+		}
+		// pq stores the number without indegree, ordered by number value ascending
+		PriorityQueue<Integer> pq = new PriorityQueue<>();
+		
+		for (int i = 1; i < n + 1; i++) { //i starts from 1 to ignore 0
+			if (indegree[i] == 0) pq.add(i);
+		}
+		StringBuilder res = new StringBuilder();
+		while (!pq.isEmpty()) {
+			int v = pq.poll();
+			res.append(v);
+			for (int node : graph[v]) {
+				indegree[node]--; // once this node is visited, so indegree--, if no more indegree, then add to queue to be ready to use
+				if (indegree[node] == 0) {
+					pq.add(node);
+				}
+			}
+		}
+		
+		return res.toString();
+    }
+}
