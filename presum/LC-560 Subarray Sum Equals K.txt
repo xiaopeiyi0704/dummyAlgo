@@ -1,0 +1,21 @@
+// presum
+// TC: n^2
+// SC: n
+// build presum array and all the range difference, if there is a range difference equal k, then count 1
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        int[] presum = new int[nums.length + 1];
+        
+        for (int i = 1; i < presum.length; i++) {
+            presum[i] = presum[i - 1] + nums[i - 1];
+        }
+        int count = 0;
+        for (int start = 0; start < nums.length; start++) {
+            for (int end = start + 1; end < presum.length; end++) {
+                if (presum[end] - presum[start] == k) count++;
+            }
+        }
+        
+        return count;
+    }
+}

@@ -1,0 +1,33 @@
+/*
+// DFS - TLE
+// TC : 2^n
+// SC : n
+// 1 it is asking conguous sequence - once use current element, have to use next element or stop - cannot have gap
+// 2 for each element we have two choices use it or not use it, but combine #1 once use it, next element also use it
+// 3 try all the combination
+// 4 when current sum > k, we should keep going since may meet negative number later
+    e.g [3, 0, 1, -1], k = 3
+*/
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        return dfs(nums, 0, k, 0);
+    }
+    
+    private int dfs(int[] nums, int index, int k, int flag) {
+        if (index >= nums.length) return 0; // base case 2, have to stop when tried all the element
+        
+        int option1 = 0;
+        int option2 = 0;
+        
+        if (flag == 1) {
+            option1 = dfs(nums, index + 1, k - nums[index], 1); // if prev element already used, current should be taken
+            if (k - nums[index] == 0) option1+= 1; // if current meet k, we should keep going since later elements sum could be 0
+        } else {
+            option1 = dfs(nums, index + 1, k, 0); // if prev element is not used, we can skip current as well
+            option2 = dfs(nums, index + 1, k - nums[index], 1); // if prev element is not use, we can start to use it as well
+            if (k - nums[index] == 0) option2+= 1; // if current meet k, we should keep going since later elements sum could be 0
+        }
+        
+        return option1 + option2;
+    }
+}

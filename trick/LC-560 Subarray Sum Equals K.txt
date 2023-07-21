@@ -1,0 +1,30 @@
+// hashmap
+// the goal is check all the ranges between two index that sum is equal k - how?
+// 1 if sum(end) - sumStart = k, then we count 1
+// 2 if sum(end + x) - sum(start) = k, then we count 1
+// 3 if sum(end + x + y) = sum(start), then later sum(end + x + y + z) - sum(start) = k, sum(end + x + y + z) - sum(end + x + y) also equal to k
+// so at the point sum(end + x + y + z), we need to count 2 instead of one. So we nedd to write down the number of occurance of sum(start)/sum(end + x + y)
+// because later when see sum(end + n) - sum(start) = k, each time we need to update 2 since sum(end + x + y) = sum(start) and sum(end + n) - sum(end + x + y) also a solution
+// how to write down the occurence?- use Map
+// TC: n
+// SC: n
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        Map<Integer, Integer> occuranceMap = new HashMap<>();
+        
+        int sum = 0;
+        int count = 0;
+        occuranceMap.put(0, 1); // this is the base, we have to have it. e.g nums = {10}, k = 10
+        
+        for (int i = 0; i < nums.length; i++) {
+            sum+= nums[i];
+            
+            if (occuranceMap.containsKey(sum - k)) { // sum - k to sum is the range we are looking for
+                count+= occuranceMap.get(sum - k);
+            }
+            occuranceMap.put(sum, occuranceMap.getOrDefault(sum, 0) + 1);
+        }
+        
+        return count;
+    }
+}

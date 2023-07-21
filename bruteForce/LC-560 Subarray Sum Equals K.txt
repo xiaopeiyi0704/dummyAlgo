@@ -1,0 +1,24 @@
+// Brute force
+// TC: n^2
+// SC: O(1)
+try all the possible subarrays and count how many of them are sum equal to k
+
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        int count = 0;
+        
+        // the outter loop means, we use the start index element as current subarray first element
+        // when goes to start + 1, means we do not use start, and use start + 1 as current subarray first element
+        // it is a typical way to try all possible subarrays
+        for (int start = 0; start < nums.length; start++) {
+            int sum = 0;
+            // current subarray starts from above start element and keep trying each step to the last index of nums[] and see which subarray sum equal to k
+            for (int end = start; end < nums.length; end++) { // end = start means current element itself can be equal to k
+                sum+= nums[end];
+                if (sum == k) count++; // once total sum equal to k, we counted regardless how many elements we used, it is always a subsequence
+            }
+        }
+        
+        return count;
+    }
+}
