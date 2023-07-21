@@ -1,0 +1,38 @@
+/*observation
+1 how to know if two range is overlap - startA < endB and startB < endA
+2 how to easily check between each range? - sort them based on start and check(n), then you do not need to do all the combination check(n^2)
+tc: nlogn + n
+sc: list n, res n
+*/
+class Solution {
+    public int[][] merge(int[][] intervals) {
+
+        List<int[]> list = new ArrayList<>();
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+        
+        int start = intervals[0][0];
+        int end = intervals[0][1];        
+        
+        for (int i = 1; i < intervals.length; i++) {
+            int curStart = intervals[i][0];
+            int curEnd = intervals[i][1];
+            
+            if (start <= curEnd && curStart <= end ) { // overlap
+                start = Math.min(start, curStart);
+                end = Math.max(end, curEnd);
+            } else {
+                list.add(new int[]{start, end});
+                start = curStart;
+                end = curEnd;
+            }
+        }
+        
+        //add the last one, if last one is overlap with 56. Merge Intervalsprev, it is hold in start/end
+        //if the last one is not overlap, the prev is add in list in above loop, but the last one is still being hold in start/end
+        list.add(new int[]{start, end});
+        
+        int[][] res = list.toArray(new int[0][0]);
+        
+        return res;
+    }
+}
