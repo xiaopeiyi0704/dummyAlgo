@@ -1,0 +1,93 @@
+/*observation
+1 search if cache existing data
+2 latest use in the end
+3 least use in the first
+4 remove least use(first) when exeeds size
+5 if an existing one is used, update it to lastest use(in the end), and remove it from origin position
+6 if put an existing key, we'd better to remove the old one and create and put the new one. Because the value of key could be updated. if not use the new node, do not forget update the value
+*/
+class LRUCache {
+    private int size;
+    private Map<Integer, Node> map;
+    private DoubleLinkedList list;
+    public LRUCache(int capacity) {
+        size = capacity;
+        map = new HashMap<>();
+        list = new DoubleLinkedList();
+    }
+    
+    public int get(int key) {
+        if (map.containsKey(key)) {
+            Node curNode = map.get(key);
+            list.remove(curNode);
+            list.addLast(curNode);
+            
+            return map.get(key).value;
+        } 
+        
+        return -1;
+    }
+    
+    public void put(int key, int value) {
+        Node newNode = new Node(key, value);
+        if (map.containsKey(key)) {
+            Node curNode = map.get(key);
+            list.remove(curNode);
+            map.remove(curNode.key);
+        } else {
+            if (map.size() == this.size) {
+                Node node = list.removeFirst();
+                map.remove(node.key);
+            }  
+        }
+        list.addLast(newNode);
+        map.put(key, newNode);
+    }
+}
+
+class DoubleLinkedList {
+    Node head;
+    Node tail;
+    
+    public DoubleLinkedList() {
+        head = new Node(-1, -1);
+        tail = new Node(-1, -1);
+        head.next = tail;
+        tail.prev = head;
+    }
+    
+    public void addLast(Node node) {
+        tail.prev.next = node;
+        node.prev = tail.prev;
+        node.next = tail;
+        tail.prev = node;
+    }
+    
+    public void remove(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+        node.prev = null;
+        node.next = null;
+    }
+    
+    public Node removeFirst() {
+        Node node = head.next;
+        head.next = node.next;
+        node.next.prev = head;
+        node.prev = null;
+        node.next = null;
+        return node;
+    }    
+}
+
+class Node {
+    int key;
+    int value;
+    Node prev;
+    Node next;
+    
+    public Node(int key, int value) {
+        this.key = key;
+        this.value = value;
+    }
+}
