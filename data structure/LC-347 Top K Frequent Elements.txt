@@ -1,0 +1,39 @@
+/*observation
+1 to calculate the frequence, have to group and count - use map to count each value's occurance
+2 how to keep top k, use a min heap with k size to store top k high frequence - why min heap? once top one is smaller, we can replace it, and then current k always most frequence
+*/
+// tc: grouping n, pq is klogk, which k is number of group. total is klogk
+// sc: n for map, n for pq, n for result for worst case. total is n
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>(); // for group the frequence
+        for (int i = 0; i < nums.length; i++) { // grouping
+            map.put(nums[i], map.getOrDefault(nums[i], 0) + 1);
+        }
+        
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[1] - b[1]); // min heap for storing top k
+        
+        for(Map.Entry<Integer, Integer> pair : map.entrySet()) { // traverse all the groups
+            int[] num = new int[2]; // key and value
+            num[0] = pair.getKey();
+            num[1] = pair.getValue();
+            
+            if (pq.size() == k) { // if already has key element, then need to compare the min/top one with current num, keep the bigger one
+                if (num[1] > pq.peek()[1]) {
+                    pq.poll();
+                    pq.add(num);
+                }
+            } else {
+                pq.add(num);
+            }
+        }
+        int[] res = new int[pq.size()];
+        int index = 0;
+        while (pq.size() > 0) { // pop the pq to get the top k elements in it
+            res[index] = pq.poll()[0];
+            index++;
+        }
+        
+        return res;
+    }
+}
