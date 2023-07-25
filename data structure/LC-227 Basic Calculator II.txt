@@ -1,0 +1,48 @@
+/*observation
+1 express contains * and /, when meet * and / need to use prev number to calculte, how? - use stack to get prev is easy
+2 what and when number need to put in the stack?
+  what - when meet digit then collect digit by number = number * 10 + (int)(ch - '0'); but it is positvie or negative? - depends on the sign before the    number
+  when - when meet a "new" sign char(current char is a sign) then it is time to put collected number into stack
+3 what about * or /
+  stack pop to get prev number and apply * or /
+4 based on #2 and #3 we know we need to track the sign before a number, then later we meet a sign again, then we use the tracked sign for the number.  
+*/
+class Solution {
+    public int calculate(String s) { 
+        Stack<Integer> stack = new Stack<>();
+        char sign = '+'; // use to track sign, default can be either + or -, since inital number is 0, + or - all wont affect
+        int number = 0; // track the number
+        for(int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i); // current char
+
+            if (Character.isDigit(ch)) { // if digit then track and collect current number
+                number = number * 10 + (int)(ch - '0');
+            } 
+            if ((!Character.isDigit(ch) && ch != ' ') || i == s.length() - 1){ // if a sign or reach to the end. then need to process
+                if (sign == '+') { // if tracked sign(before number) is + then add this number into stack as positive number
+                    stack.add(number);
+                } else if (sign == '-') { // if tracked sign(before number) is - then add this number into stack as negative number
+                    stack.add(-number);
+                } else if (sign == '*') {  // if tracked sign(before number) is * or / then pop the prev number from stack and process
+                    int prev = stack.pop();
+                    number = prev * number;
+                    stack.add(number); // after calculte, then put it back to stack
+                } else {
+                    int prev = stack.pop();
+                    number = prev / number;
+                    stack.add(number);
+                }
+                sign = ch;
+                number = 0;
+            }
+        }
+        
+        // add all the numbers in stack
+        int total = 0;
+        for (int n : stack) {
+            total+= n;
+        }
+        
+        return total;
+    }
+}

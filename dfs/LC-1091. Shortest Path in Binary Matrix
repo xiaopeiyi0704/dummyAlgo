@@ -1,0 +1,89 @@
+// bfs - step by step(layer by layer) trying from start point, first reach to dest, then it is the shortest
+// tc: mn
+// sc: mn q, mn visited, total 2mn
+class Solution {
+    int[][] dxy = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+    boolean[][] visited;
+    public int shortestPathBinaryMatrix(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        visited = new boolean[m][n];
+        
+        Queue<int[]> q = new LinkedList<>();
+        int step = 0;
+        
+        if (grid[0][0] == 0) q.add(new int[]{0, 0});
+        
+        while (!q.isEmpty()) {
+            step++;
+            int size = q.size();
+            
+            for (int i = 0; i < size; i++) {
+                int[] cur = q.poll();
+                if (cur[0] == m - 1 && cur[1] == n - 1) return step;
+                
+
+                for (int d = 0; d < dxy.length; d++) {
+                    int x = cur[0] + dxy[d][0];
+                    int y = cur[1] + dxy[d][1];
+
+                    if (x < 0 || x >= m || y < 0 || y >= n || grid[x][y] != 0 || visited[x][y]) {
+                        continue;
+                    }
+                    q.add(new int[]{x, y});
+                    visited[x][y] = true; // visited check has to be here when add element, otherwise same cell can be added.
+                }
+            }
+           
+        }
+        
+        return -1;
+    }
+}
+
+/* dfs - TLE - try all the possible ways and get the shortest
+// tc: 8^mn - each cell has 8 ways, and there are mn cells
+// sc: mn
+class Solution {
+    int[][] dxy = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+    boolean[][] visited;
+    public int shortestPathBinaryMatrix(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        visited = new boolean[m][n];
+        
+        int res =  dfs(grid, 0, 0, m, n);
+        
+        if (res == Integer.MAX_VALUE) return -1;
+        
+        return res;
+    }
+    
+    
+    private int dfs(int[][] grid, int row, int col, int m, int n) {
+        if (row == m - 1 && col == n - 1 && grid[row][col] == 0) {
+            return 1;
+        }
+        
+        if (row < 0 || row >= m || col < 0 || col >= n || grid[row][col] != 0 || visited[row][col]) {
+            return Integer.MAX_VALUE;
+        }
+        
+        visited[row][col] = true;
+        
+        int result = Integer.MAX_VALUE;
+        for (int d = 0; d < dxy.length; d++) {
+            int x = row + dxy[d][0];
+            int y = col + dxy[d][1];
+            
+            int sub = dfs(grid, x, y, m, n);
+            if (sub != Integer.MAX_VALUE) sub+= 1;
+            
+            result = Math.min(result, sub);
+        }
+        visited[row][col] = false;
+        
+        return result;
+    }
+}
+*/
