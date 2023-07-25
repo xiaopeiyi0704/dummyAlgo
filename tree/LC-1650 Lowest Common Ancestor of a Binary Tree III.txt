@@ -1,0 +1,63 @@
+/*observation
+method1 find the root(node witout parent), then start from root to look for LCA
+method2 track and write the path from node to root
+  if either node path contains the other, then the other is the LCA
+  or
+  check their 1st(lowest) common node in the path
+method3 convert it to linked list problem, traverse the path from p and q together to the root/parent, 
+  once p reach to null point to q to continue, once q reach to null point then point to p, 
+  then both path become same length(p + q), once the two pointers are the same means it is the joint point, which is the LCA
+*/
+
+class Solution {
+    // method2
+    public Node lowestCommonAncestor(Node p, Node q) {
+        Node a = p;
+        Node b = q;
+        
+        while (a != b) { // when a == b, then the point is the LCA
+            if (a == null) {
+                a = q;
+            } else {
+                a = a.parent;
+            }
+            
+            if (b == null) {
+                b = p;
+            } else {
+                b = b.parent;
+            }
+        }
+        
+        return a; // or b
+    }
+    /*
+    // method2
+    public Node lowestCommonAncestor(Node p, Node q) {
+        // LinkedHashSet maintain the insertion order to easily figure out the 1st(lowest) common node in the path later
+        LinkedHashMap<Integer, Node> pmap = new LinkedHashMap<>();
+        LinkedHashMap<Integer, Node> qmap = new LinkedHashMap<>();
+        
+        Node p1 = p;
+        Node p2 = q;
+        while (p1 != null) {
+            if (p1.val == q.val) return q;
+            pmap.put(p1.val, p1);
+            p1 = p1.parent;
+        }
+        
+        while (p2 != null) {
+            if (p2.val == p.val) return p;
+            qmap.put(p2.val, p2);
+            p2 = p2.parent;
+        }
+        
+        Set<Integer> keys = pmap.keySet();
+        for(int val : keys) {
+            if (qmap.containsKey(val)) return qmap.get(val);
+        }
+        
+        return null;
+    }
+    */
+}

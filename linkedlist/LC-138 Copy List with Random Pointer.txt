@@ -1,0 +1,34 @@
+/*observation
+1 copy the original list with next pointer is easy - use dummy node to start and traverse the original list
+2 how to handle the random pointer is the key part, how to know which node does the random pointer points to in the new list? 
+  need to build a mapping relationship between each new node and copied node
+*/
+class Solution {
+    public Node copyRandomList(Node head) {
+        Map<Node, Node> map = new HashMap<>();
+        
+        Node dummy = new Node(-1);
+        Node p1 = dummy;
+        Node p2 = head;
+        while (p2 != null) { // first loop build new list by next pointer
+            Node node= new Node(p2.val);
+            p1.next = node;
+            map.put(p2, node); // build mapping relationship between new node and old node (old node is key, new node is value.)
+            p1 = p1.next;
+            p2 = p2.next;
+        }
+        
+        p1 = dummy.next;
+        p2 = head;
+        while (p2 != null) { // second loop to handle random pointer
+            Node p2Node = p2.random;
+            Node p1Node = map.get(p2Node); // given old node to get mapped new node - this node is random pointer should point to
+            
+            p1.random = p1Node;
+            p1 = p1.next;
+            p2 = p2.next;
+        }
+        
+        return dummy.next;
+    }
+}

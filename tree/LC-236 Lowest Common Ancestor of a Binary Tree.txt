@@ -1,0 +1,24 @@
+/*observation
+1 common ancestor can be a "3rd" node - two nodes asides two sides of the common ancestor
+  search nodes and at a point(node), both nodes are found
+2 one can be another's ancestor
+  search nodes and back to start point(root), only one node is found
+if #1 the "3rd" node is the common ancestor
+if #2 the found one is common ancestor - if one is the other one's ancestor, then it is the lowest 
+once find one, return it without keeping searching on found one children, even though the other is in its children, still no need to keep looking for it, because #2
+*/
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return null; // cannot find return null
+        
+        if (root.val == p.val || root.val == q.val) return root; // find it return it
+        
+        // left or right is null when not find anything, otherwise both or either of them is the found one
+        TreeNode left = lowestCommonAncestor(root.left, p, q); // search left subtree
+        TreeNode right = lowestCommonAncestor(root.right, p, q); // search right subtree
+        
+        if (left != null && right != null) return root; // #1 
+        
+        return left == null ? right : left; 
+    }
+}

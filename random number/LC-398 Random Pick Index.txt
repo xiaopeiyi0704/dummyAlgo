@@ -1,0 +1,28 @@
+/*observation
+1 elements in array can be duplicate, so group them and pick a random one between them
+2 use hashmap to group them based on element value as key, and value is a list of indexes
+3 random pick an index from grouped list based on list length
+4 the value from list is the acutal index in nums[]
+
+*/
+class Solution {
+    Map<Integer, List<Integer>> map;
+    Random rand;
+    public Solution(int[] nums) {
+        map = new HashMap<>();
+        rand = new Random();
+        
+        for (int i = 0; i < nums.length; i++) {
+            map.putIfAbsent(nums[i], new ArrayList<Integer>());
+            map.get(nums[i]).add(i);
+        }
+    }
+    
+    public int pick(int target) {
+        List<Integer> list = map.get(target);
+        int size = list.size();
+        int index = rand.nextInt(size);
+        
+        return list.get(index);
+    }
+}
