@@ -1,0 +1,48 @@
+/*observation
+1 how to pick the index by considering the weight? - presum
+  why? more weight means you have more chance to get that number of the index
+  when we do the presum it forms a range(between each element in the presum array)
+  if the diff value between two elements in presum array means it has more chance to be picked
+  and the bigger diff value up to the weight of that index in the original array
+2 once we get a random number, then we can know which range the random number locats
+  e.g nums[2, 4, 6] presum[0, 2, 6, 12] random number is 5
+  there is no 5 in presum array, and we we know it is from 2 to 6
+  2 cannot cover it, and 6 can cover it. so we return 6's index 2.We use BINERY SEARCH to get the "left   bound(min number can cover it)"
+  and we know in presum the real index offset is 1, so when go back to original w array, we need to return index - 1, which is 1, value is 4
+*/
+//tc: nlogn
+//sc: n
+class Solution {
+    int[] presum;
+    public Solution(int[] w) {
+        presum = new int[w.length + 1];
+        
+        for (int i = 1; i < presum.length; i++) {
+            presum[i] = presum[i - 1] + w[i - 1];
+        }
+    }
+    
+    public int pickIndex() {
+        
+        int rand = (int)(Math.random() * presum[presum.length - 1]) + 1;
+        
+        int left = 1; //since presum[0] is nothing, so starts from index 1
+        int right = presum.length - 1;
+        
+        int res = -1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if (presum[mid] < rand) {
+                left = mid + 1;
+            } else {
+                res = mid;
+                right = mid - 1;
+            }
+        }
+        
+        //presum[0] is nothing, and its acutal start index is 1
+        //but when get back to index in w, need to -1 
+        return res - 1;
+    }
+}

@@ -1,0 +1,58 @@
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        // return byMinheap(nums, k);
+         return byCountingSort(nums, k);
+    }
+    
+    // counting sort and get the k largest
+    // TC: O(n)
+    // SC: O(n)
+    private int byCountingSort(int[] nums, int k) {
+        // 1 to do counting sort, we need an array for all possible value in nums array and count
+        // if max value is big in nums, then the array size can be big e.g [98, 99], we only 
+        // have 2 elements, but we need 100 elements count array for it
+        // 2 the element value of array can be negative, then we cannot count when index value < 0
+        // so combine #1 and #2 we only focus on the range between min and max value in nums[]
+        // and we need to find a way always count start index 0, no negative value
+        
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        
+        for (int num : nums) {
+            min = Math.min(min, num);
+            max = Math.max(max, num);
+        }
+        int[] count = new int[max - min + 1]; // #1
+        
+        for (int num : nums) {
+            count[num - min]++; // count it! and index/num - min never < 0
+        }
+        
+        for (int i = count.length - 1; i >= 0; i--) {
+            k-= count[i];
+            if (k <= 0) return i + min;
+        }
+        
+        return -1;
+    }
+    
+    // build min heap with k size to make sure top one is the k largest and return top one
+    // TC: O(nlogk)
+    // SC: O(n)
+    private int byMinheap(int[] nums, int k) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        
+        for (int num : nums) {
+            if (pq.size() == k) {
+                if (num > pq.peek()) {
+                    pq.poll();
+                    pq.add(num);
+                }
+            } else {
+                pq.add(num);
+            }
+        }
+        
+        return pq.poll();
+    }
+}

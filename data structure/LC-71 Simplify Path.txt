@@ -1,0 +1,36 @@
+/*observation
+1 start from /
+2 each directory is seperated by /
+3 ignore ., which means current directory which is redundent
+4 // equals /, which means ignore empty string after split
+5 path does not ending with / if not root directory
+6 .. means go to upper level, which means need to remove(get out of) current directory
+*/
+class Solution {
+    public String simplifyPath(String path) {
+        String[] directories = path.split("/"); // split to get all cmd or directories on order #2
+        
+        Stack<String> stack = new Stack<String>(); // use stack is easy for process ".."
+        
+        for (String d : directories) {
+            if (d.equals(".") || d.equals("")) continue; // #3 and #4
+            
+            if (d.equals("..")) { // #6, get out of current directory by remove it from stack
+                if (stack.size() > 0) stack.pop();
+                continue;
+            }
+            
+            stack.add(d); // add directory to stack
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        // loop stack to build final cmd string
+        for (String d : stack) {
+            sb.append("/");
+            sb.append(d);
+        }
+        
+        // if sb is empty means we are at root level not in any sub directory
+        return sb.length() == 0 ? "/" : sb.toString();
+    }
+}
