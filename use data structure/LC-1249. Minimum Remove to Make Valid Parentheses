@@ -1,0 +1,68 @@
+/*observation
+1 ( should come earlier than ) - if see ) first then remove it
+2 ( and ) should have same count, and if ( more than ), need to remove redundant (
+  traverse string by follow #1 rule, count ( and ), and put char in stack,  in the end, if ( > ), poll ( from stack
+*/
+class Solution {
+    public String minRemoveToMakeValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        
+        int left = 0;
+        int right = 0;
+        // in this loop, follow #1 rule -  it makes sure that ( >= ) in the stack
+        for (char ch : s.toCharArray()) {
+            if (ch == ')' && right >= left) continue;
+            
+            if (ch == '(') left++;
+            if (ch == ')') right++;
+            
+            stack.add(ch);
+        }
+        
+        // remove the redundant ( if there is, if ( > ), poll ( from stack
+        // when poll from stack ) should come earlier than( since poll from stack is a reversed order
+        StringBuilder sb = new StringBuilder();
+        
+        while (!stack.isEmpty()) {
+            if (left > right && stack.peek() == '(') {
+                stack.pop();
+                left--;
+            } else {
+                 sb.append(stack.pop());
+            }
+        }
+        
+      
+        return sb.reverse().toString();
+    }
+}
+
+/*following solution is from leetcode solution, which has same TC but is better since no need to do sb.reverse() part
+class Solution {
+    public String minRemoveToMakeValid(String s) {
+        Set<Integer> indexesToRemove = new HashSet<>();
+        Deque<Integer> stack = new ArrayDeque<>();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stack.push(i);
+            } if (s.charAt(i) == ')') {
+                if (stack.isEmpty()) { // #1 rule - if see ) first then mark it as to be removed
+                    indexesToRemove.add(i);
+                } else {
+                    stack.pop(); // if valid - remove a pair
+                }
+            }
+        }
+        // after above loop, all the indexes in the stack is redundant that need to be remove
+        // Put any indexes remaining on stack into the set.
+        while (!stack.isEmpty()) indexesToRemove.add(stack.pop());
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (!indexesToRemove.contains(i)) {
+                sb.append(s.charAt(i));
+            }
+        }
+        return sb.toString();
+    }
+}
+*/

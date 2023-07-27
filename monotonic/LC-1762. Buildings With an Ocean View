@@ -1,0 +1,27 @@
+/*observation
+this is a typical monotonic Stack question, only question is that need to keep it increasing order or decreasing order?
+DECREASE - since increase value/height will block the view(remove all blocked building in the queue)
+*/
+class Solution {
+    public int[] findBuildings(int[] heights) {
+        Stack<Integer> stack = new Stack<>(); // store index, NOT value
+        
+        for (int i = 0; i < heights.length; i++) {
+            while (!stack.isEmpty() && heights[stack.peek()] <= heights[i]) {
+                stack.pop();
+            }
+            
+            stack.add(i);
+        }
+        
+        int[] res = new int[stack.size()];
+        
+        int index = 0;
+        for (int i : stack) {
+            res[index] = i;
+            index++;
+        }
+
+        return res;
+    }
+}
