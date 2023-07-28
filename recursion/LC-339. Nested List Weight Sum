@@ -1,0 +1,70 @@
+/*observation
+1 understand the provided api - need to know how to use it
+2 to get sum of each number * its depth, then we have to know what is the depth of each number
+3 use given api and recursion to peel each layer(depth) of the list
+4 use hash map to group (depth<->integer list of this depth) each depth's integer - how? - recursion
+5 calcute
+ */
+//tc: total number of integer in the list is n, then O(n)
+//sc: n for hashmap, and n for recursion call stack
+class Solution {
+    public int depthSum(List<NestedInteger> nestedList) {
+        Map<Integer, List<Integer>> depthToValue = new HashMap<>();
+        
+        loadMapData(nestedList, depthToValue, 1);
+        
+        int sum = 0;
+        for (Map.Entry<Integer, List<Integer>> pair : depthToValue.entrySet()) {
+            int depth = pair.getKey();
+            List<Integer> list = pair.getValue();
+            
+            for (int val : list) {
+                sum+= depth*val;
+            }
+        }
+        
+        return sum;
+    }
+    
+    private void loadMapData(List<NestedInteger> nestedList, Map<Integer, List<Integer>> map, int depth) {
+        if (nestedList == null || nestedList.size() == 0) return;
+        
+        for (NestedInteger nestedInt : nestedList) {
+            if (nestedInt.isInteger()) {
+                map.putIfAbsent(depth, new ArrayList<Integer>());
+                map.get(depth).add(nestedInt.getInteger());
+            } else {
+                loadMapData(nestedInt.getList(), map, depth + 1);
+            }
+        }
+    }
+}
+
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * public interface NestedInteger {
+ *     // Constructor initializes an empty nested list.
+ *     public NestedInteger();
+ *
+ *     // Constructor initializes a single integer.
+ *     public NestedInteger(int value);
+ *
+ *     // @return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     public boolean isInteger();
+ *
+ *     // @return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // Return null if this NestedInteger holds a nested list
+ *     public Integer getInteger();
+ *
+ *     // Set this NestedInteger to hold a single integer.
+ *     public void setInteger(int value);
+ *
+ *     // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+ *     public void add(NestedInteger ni);
+ *
+ *     // @return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // Return empty list if this NestedInteger holds a single integer
+ *     public List<NestedInteger> getList();
+ * }
+ */

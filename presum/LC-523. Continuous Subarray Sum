@@ -1,0 +1,101 @@
+/*observation
+1 subarray sum % k == 0
+2 subarray.length >= 2
+3 0 is always a multiple of k
+try all the possible subarray to check if true or false
+method 1 : brute force - n^2 TLE
+method 2 : presum - n
+           normal presum tc is n^2 too since need to two loop to check all the possible presum range (presum[i] - presum[j] % k == 0) 
+           but check (preSum[i] - preSum[j]) % k == 0 is same as checking preSum[i] % k == preSum[j] % k - why?
+           preSum[i] % k == preSum[j] % k means that between preSum[i] and preSum[j](presum[i] - presum[j]) either 0 e.g k = 6, 2...2 OR multiple of k e.g 2...8. Both 0 and 9=8- 2 are true
+           so we need a map to write down each presum[i] % k with index
+           
+method 3 : enchanced presum - check everything while building presum
+
+method 4: enchancedEnhancedPresum - no need presum array (space enhance) use sum to track
+           
+*/
+class Solution {
+    public boolean checkSubarraySum(int[] nums, int k) {
+        //return bruteForceSolution(nums, k);
+        //return presumSolution(nums, k);
+        //return enhancedPresum(nums, k);
+        return enchancedEnhancedPresum(nums, k);
+    }
+    
+    private boolean enchancedEnhancedPresum(int[] nums, int k) {
+        int sum = 0;
+        Map<Integer, Integer> valueToIndex = new HashMap<>();
+        valueToIndex.put(0, -1); // need to write this down e.g [1, 1, 1] k = 3, presum [0, 1, 2, 3] presum[0] % k == presum[3] * k
+        for (int i = 0; i < nums.length; i++) {
+            sum+= nums[i];
+            if (!valueToIndex.containsKey(sum % k)) {
+                valueToIndex.put(sum % k, i);
+            } else {
+                if (i - valueToIndex.get(sum % k) >= 2) { // #2 - between 2 presum element, must have something to make subarray
+                    return true;
+                }
+            }
+            
+        }
+
+        return false;
+    }
+    
+    private boolean enhancedPresum(int[] nums, int k) {
+        int[] presum = new int[nums.length + 1];
+        Map<Integer, Integer> valueToIndex = new HashMap<>();
+        valueToIndex.put(0, 0); // need to write this down e.g [1, 1, 1] k = 3, presum [0, 1, 2, 3] presum[0] % k == presum[3] * k
+        for (int i = 1; i < presum.length; i++) {
+            presum[i] = presum[i - 1] + nums[i - 1];
+            if (!valueToIndex.containsKey(presum[i] % k)) {
+                valueToIndex.put(presum[i] % k, i);
+            } else {
+                if (i - valueToIndex.get(presum[i] % k) >= 2) { // #2 - between 2 presum element, must have something to make subarray
+                    return true;
+                }
+            }
+            
+        }
+
+        return false;
+    }
+    
+    private boolean presumSolution(int[] nums, int k) {
+        int[] presum = new int[nums.length + 1];
+        Map<Integer, Integer> valueToIndex = new HashMap<>();
+        valueToIndex.put(0, 0); // need to write this down e.g [1, 1, 1] k = 3, presum [0, 1, 2, 3] presum[0] % k == presum[3] * k
+        for (int i = 1; i < presum.length; i++) {
+            presum[i] = presum[i - 1] + nums[i - 1];
+            if (!valueToIndex.containsKey(presum[i] % k)) {
+                valueToIndex.put(presum[i] % k, i);
+            }
+            // if already in the map, we ignore, we write down 1st occurance since we need bigger range to make sure range >= 2 - #2
+        }
+        
+        for (int i = 1; i < presum.length; i++) {
+            int need = presum[i] % k;
+            if (valueToIndex.containsKey(need)) {
+                if (i - valueToIndex.get(need) >= 2) { // #2 - between 2 presum element, must have something to make subarray
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    private boolean bruteForceSolution(int[] nums, int k) {
+        
+        for (int i = 0; i < nums.length; i++) {
+            int sum = nums[i];
+
+            for (int j = i + 1; j < nums.length; j++) {
+                sum+= nums[j];
+                if (sum % k == 0) return true;
+            }
+        }
+        
+        return false;
+    }
+}

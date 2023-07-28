@@ -1,0 +1,55 @@
+/**
+ * // This is the BinaryMatrix's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * interface BinaryMatrix {
+ *     public int get(int row, int col) {}
+ *     public List<Integer> dimensions {}
+ * };
+ */
+
+/*observation
+1 most important thing  - row sorted - means the elements are sorted in each row (all 0 before 1)
+  I initially interpreted this in wrong way - I thought row sorted means all rows with all 0 come first
+2 no more than 1000 api calls in total, matrix size can be 100 * 100, so we cannot visited all the cells 
+  if binery search search all columns in each row to get most left 1 is log100, which is about 7 or 8, total is 700 or 800 api calls, which satisfy the requirement
+*/
+// TC: rowlogcolumn
+class Solution {
+    public int leftMostColumnWithOne(BinaryMatrix binaryMatrix) {
+        int m = binaryMatrix.dimensions().get(0);
+        int n = binaryMatrix.dimensions().get(1);
+        
+        int res = -1;
+        for (int i = 0; i < m; i++) {
+            int val = leftBoundSearch(binaryMatrix, n, i);
+            if (val != -1) {
+                if (res == -1) {
+                    res = val;
+                } else {
+                    res = Math.min(res, val);
+                }
+            }
+        }
+        
+        return res;
+    }
+    
+    private int leftBoundSearch(BinaryMatrix binaryMatrix, int n, int row) {
+        int left = 0;
+        int right = n - 1;
+        
+        int res = -1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if (binaryMatrix.get(row, mid) == 1) {
+                res = mid;
+                right = mid -1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        
+        return res;
+    }
+}
