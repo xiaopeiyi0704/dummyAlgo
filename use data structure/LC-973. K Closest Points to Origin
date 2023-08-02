@@ -1,0 +1,48 @@
+/*observation
+1 get top k - use heap
+2 create object for store the top k point in heap
+3 no need to do Math.sqrt, since bigger power get bigger sqrt
+*/
+// tc: nlogk
+// sc: n
+class Solution {
+    public int[][] kClosest(int[][] points, int k) {
+        PriorityQueue<Point> pq = new PriorityQueue<>((a, b) -> b.distance - a.distance);
+        
+        for (int[] p : points) {
+            int x = p[0];
+            int y = p[1];
+            
+            int dis = (int) Math.pow(x - 0, 2) + (int)Math.pow(y - 0, 2);
+                        
+            if (pq.size() < k) {
+                pq.add(new Point(dis, p));
+            } else {
+                 if (pq.size() == k && dis < pq.peek().distance) {
+                     pq.poll();
+                     pq.add(new Point(dis, p));
+                 }
+            }
+            
+        }
+        
+        int[][] res = new int[pq.size()][2];
+        int index = 0;
+        while (!pq.isEmpty()) {
+            res[index] = pq.poll().xy;
+            index++;
+        }
+        
+        return res;
+    } 
+}
+
+class Point {
+    public int distance;
+    public int[] xy;
+    
+    public Point(int distance, int[] xy) {
+        this.distance = distance;
+        this.xy = xy;
+    }
+}

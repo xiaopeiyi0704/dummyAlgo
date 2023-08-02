@@ -1,0 +1,30 @@
+/*observation
+1 digit + digit and carry over the forward part
+2 what if string1 longer than string2? - treat the longer part in string 2 as 0 for each digit
+*/
+class Solution {
+    public String addStrings(String num1, String num2) {
+        StringBuilder sb = new StringBuilder();
+        int len1 = num1.length() - 1;
+        int len2 = num2.length() - 1;
+        int forward = 0;
+
+        while (len1 >= 0 || len2 >= 0) {
+            int n1 = 0;
+            int n2 = 0;
+            if (len1 >= 0) n1 = (int) (num1.charAt(len1) - '0'); //#2
+            if (len2 >= 0) n2 = (int) (num2.charAt(len2) - '0'); //#2
+            
+            sb.append((n1 + n2 + forward) % 10); // #1
+            
+            forward = (n1 + n2 + forward) / 10;
+
+            len1--;
+            len2--;
+        }
+        
+        if (forward != 0) sb.append(forward); // e.g "1" + "9", the while loop stops, but need to process the forward
+        
+        return sb.reverse().toString();
+    }
+}

@@ -1,0 +1,36 @@
+/*observation
+1 how to check if a string is palindrome? - two pointers from left, right to middle and check if each char is the same
+2 only check char is same for isAlphanumeric char
+3 conver to same case before check
+*/
+class Solution {
+    public boolean isPalindrome(String s) {
+        int left = 0;
+        int right = s.length() - 1;
+        
+        while (left < right) {
+           
+            if (!isAlphanumeric(s.charAt(left))) {
+                left++;
+                continue;
+            }
+            if (!isAlphanumeric(s.charAt(right))) {
+                right--;
+                continue;
+            }
+
+            if (Character.toLowerCase(s.charAt(left)) == Character.toLowerCase(s.charAt(right))) {
+                left++;
+                right--;
+            } else {
+                return false;
+            }
+        }
+                                          
+        return true;
+    }
+    
+    private boolean isAlphanumeric(char ch) {
+        return Character.isLetter(ch) || Character.isDigit(ch);
+    }
+}

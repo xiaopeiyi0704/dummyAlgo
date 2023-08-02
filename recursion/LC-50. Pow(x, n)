@@ -1,0 +1,27 @@
+/*observation 
+1 n can be positive or negative - if negative then a^-2 = (1/a)^2
+2 n can be ver large -2147483648 to 2147483647. how to make it has less calculation? - a^4 = a^2 * a^2
+*/
+
+class Solution {
+    public double myPow(double x, int n) {
+        if (n == 0) return 1; // base case
+        
+        
+        // why we need this? we use the method a^-k = (1/a)^k, but what if k is -2147483648, and -k = 2147483648, which makes integer overflow since positive range is 2147483647
+        if (n == Integer.MIN_VALUE) {
+            return myPow(1/x, -(n + 1)) / x;
+        }
+        
+        if (n > 0) { // #2
+          if (n % 2 == 0) {
+            double sub = myPow(x, n / 2); 
+            return sub * sub; // #2, only calculate half is good enough
+          } else { // if odd number, make it even by x * x - 1
+            return x * myPow(x, n - 1);
+          }
+        } else { // #1
+          return myPow(1/x, -n);
+        }
+    }
+}

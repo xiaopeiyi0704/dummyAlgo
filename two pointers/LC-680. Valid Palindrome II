@@ -1,0 +1,36 @@
+/*observation
+1 to check if a string is palindrome we use two pointers.
+2 if it is not we have a chance to remove one char, but we do not know remove left side or right side, so we need to try both and either one works is good enough
+*/
+class Solution {
+    public boolean validPalindrome(String s) {
+        int left = 0;
+        int right = s.length() - 1;
+ 
+        while (left < right) {
+            if (s.charAt(left) == s.charAt(right)) {
+                left++;
+                right--;
+            } else {
+               // it is time to remove, try both, either one works is fine.
+               return isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1);
+            }
+            
+        }
+        
+        return true;
+    }
+    //#1
+    private boolean isPalindrome(String s, int left, int right) {
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        
+        return true;
+    }
+    
+}

@@ -1,0 +1,48 @@
+/*observation
+just follow the diagonal path - when go up, when go down, when move x, when move y
+this question's trick is no trick - if you think too much then you lost....
+*/
+class Solution {
+    public int[] findDiagonalOrder(int[][] mat) {
+
+        boolean up = true;
+        int count = 0;
+        int m = mat.length;
+        int n = mat[0].length;
+        int[] res = new int[m * n];
+
+        int x = 0;
+        int y = 0;
+        
+        while (count < m * n) {
+            res[count] = mat[x][y];
+            count++;
+            
+            if (up) {
+                if (x == 0 && y < n - 1) {
+                    y++;
+                    up = false;
+                } else if (y == n - 1) {
+                    x++;
+                    up = false;
+                } else {
+                    x--;
+                    y++;
+                }
+            } else {
+                if (y == 0 && x < m - 1) {
+                    x++;
+                    up = true;
+                } else if (x == m - 1) {
+                    y++;
+                    up = true;
+                } else {
+                    x++;
+                    y--;
+                }
+            }           
+        }
+        
+        return res;
+    }
+}

@@ -1,0 +1,57 @@
+class Solution {
+    List<String> res;
+    public List<String> addOperators(String num, int target) {
+        res = new ArrayList<String>();
+        
+        backtracking(num, target, 0, 0, 0, new LinkedList());
+        
+        return res;
+    }
+    
+    private void backtracking(String num, int target, int index, long total, long prev, LinkedList<String> list) {
+        if (index == num.length()) {
+            if (total == target) {
+               StringBuilder sb = new StringBuilder();
+               for (String s : list) {
+                   sb.append(s);
+               }
+               res.add(sb.toString());
+            }
+            
+            return;
+        }
+        
+        for (int i = index; i < num.length(); i++) {
+            if (num.charAt(index) == '0' && i != index) {
+                break;
+            }
+            
+            String curStr = num.substring(index, i + 1);
+            long cur = Long.parseLong(curStr);
+            
+            if (list.size() == 0) {
+                list.add(curStr);
+                backtracking(num, target, i + 1, cur, cur, list);
+                list.removeLast();
+            } else {
+                list.add("+");
+                list.add(curStr);
+                backtracking(num, target, i + 1, total + cur, cur, list);
+                list.removeLast();
+                list.removeLast();
+                
+                list.add("-");
+                list.add(curStr);
+                backtracking(num, target, i + 1, total - cur, -cur, list);
+                list.removeLast();
+                list.removeLast();
+                
+                list.add("*");
+                list.add(curStr);;
+                backtracking(num, target, i + 1, total - prev + prev * cur, cur * prev, list);
+                list.removeLast();
+                list.removeLast();
+            }
+        }
+    }
+}

@@ -1,0 +1,71 @@
+/* observation
+1 left should be equal right after traverse the string
+2 left should come first than right
+  when left > right and when you see left, you can remove/ignore cur left OR you can keep it and continue
+  when left > right and when you see right, you can remove/ignore cur right OR you can keep it and continue
+  
+3 return value is about minimum of removals - try all the ways
+4 but trim the one with bigger value
+*/
+
+// tc: 2^n
+// sc: n
+class Solution {
+    List<String> res;
+    Set<String> set; // use set to avoid duplicate string after removal
+    int min = Integer.MAX_VALUE;
+    public List<String> removeInvalidParentheses(String s) {
+        res = new ArrayList<>();
+        set = new HashSet<>();
+        
+        backtrack(s, 0, 0, 0, 0, new StringBuilder());
+        
+        for (String str : set) {
+            res.add(str);
+        }
+        return res;
+    }
+    
+    private void backtrack(String s, int index, int left, int right, int count, StringBuilder sb) {
+        if (index == s.length()) {
+            if (left == right ) { // #1
+                if (count < min) {
+                    set.clear();
+                    set.add(sb.toString());
+                    min = count;
+                } else if (count == min) {
+                    set.add(sb.toString());
+                } 
+            }
+            return;
+        }
+        
+        if (count > min) return ;
+        
+        char ch = s.charAt(index);
+        
+        if (ch == '(') { // when left > right and when you see left, you can remove/ignore cur left OR you can keep it and continue
+            backtrack(s, index + 1, left, right, count + 1, sb); // remove/ignore cur left - once remove then count++ to remember the number of removals
+            
+            sb.append(ch);
+            backtrack(s, index + 1, left + 1, right, count, sb); // keep it and continue
+            sb.deleteCharAt(sb.length() - 1);
+        } else if (ch == ')') {
+            if (left > right) {
+                backtrack(s, index + 1, left, right, count + 1, sb);// remove/ignore cur right - once remove then count++ to remember the number of removals
+                
+                sb.append(ch);
+                backtrack(s, index + 1, left, right + 1, count, sb);// keep it and continue
+                sb.deleteCharAt(sb.length() - 1);
+            } else {
+                backtrack(s, index + 1, left, right, count + 1, sb);
+            }
+        } else {
+            sb.append(ch);
+            backtrack(s, index + 1, left, right, count, sb); // if not (), just add it and continue
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+}
+
+

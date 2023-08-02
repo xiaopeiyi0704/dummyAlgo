@@ -1,0 +1,24 @@
+/*observation
+1 left and right should be same number
+2 left must come first than right - if right come first, then need a left . once add a left, it becomes balanced
+3 in the en
+*/
+class Solution {
+    public int minAddToMakeValid(String s) {
+        int left = 0;
+        int right = 0;
+        int count = 0;
+        
+        for (char ch : s.toCharArray()) {
+            if (ch == '(') left ++;
+            if (ch == ')') right++;
+            
+            if (right > left) { // #2 right comes first, need a left
+                count++;
+                left++; // need a left so add a left
+            }
+        }
+        // in the end, all the left come first, then just compare the total number, add the difference
+        return count + Math.abs(left - right);
+    }
+}

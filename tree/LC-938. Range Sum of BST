@@ -1,0 +1,23 @@
+/*observation
+just traverse the tree - but no need to traverse the whole tree, it is a BST, so once out of range, then no need to traverse its left or right
+ */
+class Solution {
+    int total = 0;
+    public int rangeSumBST(TreeNode root, int low, int high) {
+        if (root == null) return 0;
+        
+        if (root.val >= low && root.val <= high) {
+            total+= root.val;         
+        }
+        
+        if (root.val >= low) {
+            rangeSumBST(root.left, low, high);   
+        }
+        
+         if (root.val <= high) {
+            rangeSumBST(root.right, low, high);   
+        }
+        
+       return total;
+    }
+}

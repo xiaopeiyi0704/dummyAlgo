@@ -1,0 +1,41 @@
+/* observation
+since the constructor input is a tree, so we can
+1 in the constructor, we traverse the tree, and put it in a list
+2 next() get(index) from list
+3 hasNext() based on list size
+*/
+class BSTIterator {
+    List<Integer> list;
+    int index;
+    public BSTIterator(TreeNode root) {
+        list = new ArrayList<>();
+        index = 0;
+        inorder(root, list);
+    }
+    
+    public int next() {
+        int val = list.get(index);
+        index++;
+        
+        return val;
+    }
+    
+    public boolean hasNext() {
+        return index < list.size();
+    }
+    
+    private void inorder(TreeNode root, List<Integer> list) {
+        if (root == null) return;
+        
+        inorder(root.left, list);
+        list.add(root.val);
+        inorder(root.right, list);
+    }
+}
+
+/**
+ * Your BSTIterator object will be instantiated and called as such:
+ * BSTIterator obj = new BSTIterator(root);
+ * int param_1 = obj.next();
+ * boolean param_2 = obj.hasNext();
+ */
