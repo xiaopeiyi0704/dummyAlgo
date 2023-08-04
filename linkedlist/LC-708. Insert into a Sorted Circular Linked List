@@ -1,0 +1,71 @@
+/*
+1 find right position for the new node insertion(could be first), how? - binery search to find the node with the max of smaller value than insertVal
+  if there are multiple such node, find the last one - search right bound
+2 how to do build list for binery search? - build a list based on ascending order
+3 how to build a list with asending order? - find the first min node - the first node get decending order(1st node after last max node)
+  cannot use pq to do this - because for same value, pq cannot maintain the insertion order
+  why we need to maintain the insertion order? if 333, 4, we need to make sure the built list(333) for binary search, maintain the origin order. Otherwise will be mess up
+*/
+//tc: get 1st min node n, build list n, binery search nlgn
+//sc: list n
+class Solution {
+    public Node insert(Node head, int insertVal) {
+        if (head == null) {
+            Node newNode = new Node(insertVal);
+            newNode.next = newNode;
+            return newNode;
+        }
+
+        Node p = head;
+        // #3
+        Node maxNode = p;
+        p = p.next;
+        while(p != head) {
+            if (p.val >= maxNode.val) {
+                maxNode = p;
+            }
+            if (p.val < maxNode.val) break;
+            p = p.next;
+        }
+        
+        // #2
+        Node minNode = p;
+        List<Node> list = new ArrayList<>();
+        list.add(minNode);
+        p = p.next;
+        while( p != minNode) {
+            list.add(p);
+            p = p.next;
+        }
+        
+        // #1
+        Node prev = getInsertPosition(list, insertVal);
+        if (prev == null) prev = list.get(list.size() - 1);
+        
+        Node newNode = new Node(insertVal);
+        newNode.next = prev.next;
+        prev.next = newNode;
+        
+        return head;
+    }
+    
+    private Node getInsertPosition(List<Node> list, int value) {
+        int left = 0;
+        int right = list.size() - 1;
+        
+        Node res = null;
+        
+        while(left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if(list.get(mid).val <= value) {
+                res = list.get(mid);
+                left = mid + 1; // get right bound
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return res;
+    }
+}

@@ -1,0 +1,71 @@
+/*observation
+1 vertical traverse from top to bottom, from left to right - BFS!
+2 since BFS is from top to bottom traverse row by row, we can follow this order, but how to decide the node column and group them together? 
+  - let each node have a column tag
+  - from a node, if go left column--, if go right column++
+  - use treemap to group same column node, why use treemap? - treemap key is sorted, since our key is col and output is from most left(least col value) first, so use treemap
+  
+3 based on #2 we already grouped same column nodes, but we need to care about the output order
+  same col different row -> output less row number first
+  same col same row -> output less val first
+*/
+//tc: taverse n nodes, and treemap insert each time is n so nlogn, m group in treemap and sort, nlogn. total nlogn
+//sc: q is n, treemap is n 
+class Solution {
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        TreeMap<Integer, List<Node>> map = new TreeMap<>();// for grouping nodes by column
+        
+        Queue<Node> q = new LinkedList<>(); // #1
+        
+        if (root == null) return res;
+        int row = 0;
+        q.add(new Node(root, 0, row));
+        
+        while(!q.isEmpty()) {
+            int size = q.size();
+            row++; // track row level, later for output order
+            for(int i = 0; i < size; i++) {
+                Node node = q.remove();
+                
+                map.putIfAbsent(node.col, new ArrayList<>()); // #2
+                map.get(node.col).add(node);
+                if (node.treeNode.left != null) q.add(new Node(node.treeNode.left, node.col - 1, row)); // #2 from a node, if go left column--
+                if (node.treeNode.right != null) q.add(new Node(node.treeNode.right, node.col + 1, row)); // #2 from a node, if go right column++
+            }
+        }
+        
+        // for output sequence
+        for(Map.Entry<Integer, List<Node>> pair : map.entrySet()) {
+            List<Node> list = pair.getValue();
+            Collections.sort(list, new Comparator<Node>() {
+                public int compare(Node a, Node b) {
+                    if (a.row == b.row) {
+                        return a.treeNode.val - b.treeNode.val; // #3 same col different row -> output less row number first
+                    } else {
+                        return a.row - b.row; // #3 same col same row -> output less val first
+                    }
+                }
+            });
+            List<Integer> valList = new ArrayList<>();
+            for (Node n : list) {
+                valList.add(n.treeNode.val);
+            }
+            res.add(valList);
+        }
+        
+        return res;
+    }
+}
+
+class Node {
+    TreeNode treeNode;
+    int col;
+    int row;
+    
+    public Node(TreeNode treeNode, int col, int row) {
+        this.treeNode = treeNode;
+        this.col = col;
+        this.row = row;
+    }
+}

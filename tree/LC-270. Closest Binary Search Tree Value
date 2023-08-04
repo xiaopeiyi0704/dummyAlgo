@@ -1,0 +1,27 @@
+/*observation
+1 just traverse the tree and try all the node 
+2 the closest is the smallest abs value
+3 if same closest value, return the smallest node value
+*/
+class Solution {
+    int res = Integer.MAX_VALUE;
+    double min = Double.MAX_VALUE;
+    public int closestValue(TreeNode root, double target) {
+        if (root == null) return 0; // we do not need this return value, this it can be anything
+        
+        double diff = root.val - target;
+        if (Math.abs(diff) <= min) { // #2
+            if (Math.abs(diff) == min) {
+                res = Math.min(root.val, res); // #3
+            } else {
+                min = Math.abs(diff);
+                res = root.val;
+            }
+        } 
+        closestValue(root.left, target); // #1
+        closestValue(root.right, target); // #1
+        
+        return res;
+    }
+   
+}

@@ -1,0 +1,146 @@
+/*observation - TLE(P.S I hate this question, code looks mess up but the logic should be correct)
+1 no need to do decode for both string and check same
+2 just check string1 if can be converted to same encode way as string2
+3 when char to char same, going forward
+4 when char to char diff, stop
+5 when digit to digit same, going forward
+6 when digit to digit diff, string1 going forward, string2 stay, and keep checking the remaining digit of string2 e.g string1 = ...2.., string2 = ...5..., then string2 hold the index and become 3
+7 when char to digit, string1 going forward, string2 stay, consume1, and keep checking the remaining digit of string2 e.g string1= ...a..., string2 = ...3..., then string2 hold the index and become 2
+8 if digit e.g 12, could be either 1 and 2, or 12. need to check both cases.
+*/
+//TC: s1*s2*(number of digits) - TLE
+//sc: max(s1, s2) + substring + convertString
+class Solution {
+    Map<String, Boolean> memo = new HashMap<>();
+    public boolean possiblyEquals(String s1, String s2) {
+        
+        return isPossible(s1, s2, 0, 0, "", "");
+    }
+    
+    private boolean isPossible(String s1, String s2, int index1, int index2, String curs1, String curs2) {
+        
+        // base case
+        if (index1 == s1.length() && index2 == s2.length() && curs1.equals("") && curs2.equals("")){
+            return true;
+        }
+        
+        if (index1 == s1.length() || index2 == s2.length()) {
+            return false;
+        }
+        
+        String key = index1+"-" + index2 + "-" + curs1 + "-" + curs2;
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        }
+        
+        // #8
+        if (curs1.equals("")) {
+            if (Character.isDigit(s1.charAt(index1))) {
+                boolean options1 = false;
+                for (int i = index1; i < s1.length(); i++) {
+                    if (Character.isDigit(s1.charAt(i))) {
+                        curs1 = s1.substring(index1, i + 1);
+                 
+                        options1 = isPossible(s1, s2, i, index2, curs1, curs2);
+                        if (options1) return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
+            } else {
+                curs1 = curs1 + s1.charAt(index1);
+            }
+            
+        }
+        if (curs2.equals("")) {
+            if (Character.isDigit(s2.charAt(index2))) {
+                boolean options2 = false;
+                for (int i = index2; i < s2.length(); i++) {
+                    if (Character.isDigit(s2.charAt(i))) {
+                        curs2 = s2.substring(index2, i + 1);
+                       
+                        options2 = isPossible(s1, s2, index1, i, curs1, curs2);
+                        if (options2) return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
+            } else {
+                curs2 = curs2 + s2.charAt(index2);
+            }
+        }
+        
+        // follow the rule from #3 to #7
+        // #4
+        if (!isNumberic(curs1) && !isNumberic(curs2) && !curs1.equals(curs2)) {
+            memo.put(key, false);
+        }
+        
+        // #3
+        boolean option1 = false;
+        if (!isNumberic(curs1) && !isNumberic(curs2) && curs1.equals(curs2)) {
+            option1 = isPossible(s1, s2, index1 + 1, index2 + 1, "", "");
+        }
+        
+        // #5
+        boolean option2 = false;
+        if (isNumberic(curs1) && isNumberic(curs2) && curs1.equals(curs2)) {
+            option2 = isPossible(s1, s2, index1 + 1, index2 + 1, "", "");
+        }
+        
+        // #6
+        boolean option3 = false;
+        if (isNumberic(curs1) && isNumberic(curs2) && !curs1.equals(curs2)) {
+            int cur1 = convertToNum(curs1);
+            int cur2 = convertToNum(curs2);
+            if (cur1 > cur2) {
+               option3 = isPossible(s1, s2, index1, index2 + 1, String.valueOf(cur1 - cur2), "");
+            } else {
+               option3 = isPossible(s1, s2, index1+ 1, index2, "", String.valueOf(cur2 - cur1));
+            }
+        }
+        
+        // #7
+        boolean option4 = false;
+        if (isNumberic(curs1) && !isNumberic(curs2)) {
+            int cur1 = convertToNum(curs1);
+            if (cur1 - 1 > 0) {
+                option4 = isPossible(s1, s2, index1, index2 + 1, String.valueOf(cur1 - 1), "");
+            } else {
+                option4 = isPossible(s1, s2, index1 + 1, index2 + 1, "", "");
+            }
+        }
+        
+        // #7
+        boolean option5 = false;
+        if (!isNumberic(curs1) && isNumberic(curs2)) {
+            int cur2 = convertToNum(curs2);
+            if (cur2 - 1 > 0) {
+                option5 = isPossible(s1, s2, index1 + 1, index2, "", String.valueOf(cur2 - 1));
+            } else {
+                option5 = isPossible(s1, s2, index1 + 1, index2 + 1, "", "");
+            } 
+        }
+        
+        memo.put(key, option1 || option2 || option3 || option4 || option5);
+        return option1 || option2 || option3 || option4 || option5;
+    }
+    
+    private boolean isNumberic(String s) {
+        boolean res = false;
+        
+        try {
+            Double.parseDouble(s);
+        } catch(Exception e) {
+            return res;
+        }
+        
+        return true;
+    }
+    
+    private int convertToNum(String s) {
+        return (int) Double.parseDouble(s);
+    }
+}

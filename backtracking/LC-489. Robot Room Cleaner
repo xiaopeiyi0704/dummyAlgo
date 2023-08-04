@@ -1,0 +1,44 @@
+/*observation
+1 have to traverse all the cells - dfs
+2 at each cell, have 4 directions to move, turn robot to 4 directions and move forward for each direction
+3 need backtrack. because robot cannot come back when dfs recursion returns. So need manually put it back to origin position and face to right direction.
+4 since robot can only move forward, so roll back is just to move to opposite direction and then turn around direction.
+5 need to track is a cell has been visited, but we do not have the grid, so have to track the "relative indices", which assume start point is 0, 0, and use set to check
+*/
+//tc: total cell is n, 4^n
+//sc: set n, dxy 4, recursion stack n
+class Solution {
+    int[][] dxy = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}}; //clockwise
+    Set<String> set = new HashSet();
+    public void cleanRoom(Robot robot) {
+        clean(robot, 0, 0, 0);
+    }
+    // faceto 0 up, 1 right, 2 down, 3 left. It should be same as dxy. Then it makes sure row/col change is same as faceto direction
+    private void clean(Robot robot, int row, int col, int faceto) {
+        String key = row + "," + col;
+        set.add(key); // #5
+        robot.clean();
+        
+        //#1 #2
+        for (int i = 0; i < dxy.length; i++) {
+            int turnFaceto = (faceto + i) % 4; // 1st move starts from current faceto direction and then when i change, it clockwise changes direction
+            int nextRow = row + dxy[turnFaceto][0];
+            int nextCol = col + dxy[turnFaceto][1];
+            String nextKey = nextRow + "," + nextCol;
+            // if faceto direction is movable, then move forward
+            if (!set.contains(nextKey) && robot.move()) {
+                clean(robot, nextRow, nextCol, turnFaceto);
+                // #3 backtrack 
+                robot.turnRight(); // #4
+                robot.turnRight(); // two turnRight() make it face to opposite direction
+                robot.move(); // roll back move
+                robot.turnRight();
+                robot.turnRight(); // another two turnRight() make it face to origin direction
+            }
+            
+            // after each direction dfs try, need to try next direction
+            // since for loop follow clockwise order, we need to turn robot to clockwise order as well
+            robot.turnRight();
+        }
+    }
+}

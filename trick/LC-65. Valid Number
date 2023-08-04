@@ -1,0 +1,69 @@
+// NOTE: this question is more for communication skill during the intervew, it is hard to gather all the rules from example. To lay out all the rules you have keep taling to interviewer and summarize.
+/* I am copying official answers
+Algorithm
+
+Now that we have laid out the rules, let's iterate over the input. For each character, determine what group it belongs to, and verify that it follows the rules.
+
+Declare 3 variables seenDigit, seenExponent, and seenDot. Set all of them to false.
+
+Iterate over the input.
+
+If the character is a digit, set seenDigit = true.
+
+If the character is a sign, check if it is either the first character of the input, or if the character before it is an exponent. If not, return false.
+
+If the character is an exponent, first check if we have already seen an exponent or if we have not yet seen a digit. If either is true, then return false. Otherwise, set seenExponent = true, and seenDigit = false. We need to reset seenDigit because after an exponent, we must construct a new integer.
+
+If the character is a dot, first check if we have already seen either a dot or an exponent. If so, return false. Otherwise, set seenDot = true.
+
+If the character is anything else, return false.
+
+At the end, return seenDigit. This is one reason why we have to reset seenDigit after seeing an exponent - otherwise an input like "21e" would be incorrectly judged as valid.
+
+*/
+
+/* summary
+1 if not + - . e E digit, then false
+2 if +/-, check if it is either the first char of the input, or first char after E/e
+3 if E/e, should ever see a digit, and should be only one E/e, after E/e, should be one +/- or none, and followed all by digit
+4 if ., should appear only once, and if there is E/e, it should be before E/e
+5 At the end, return seenDigit. This is the only reason why we have to reset seenDigit after seeing an exponent(E/e must have digit) - otherwise an input like "21e" would be incorrectly judged as valid. Also a valid number must have digit.
+*/
+class Solution {
+    public boolean isNumber(String s) {
+        
+        boolean seenDigit = false;
+        boolean seenDot = false;
+        boolean seenExponent = false;
+        
+        
+        for(int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            
+            if(Character.isDigit(ch)) {
+                seenDigit = true;
+            } else if (ch == '.') { // #4
+                if (seenDot || seenExponent) {
+                    return false;
+                } 
+                seenDot = true;
+            } else if (ch == '+' || ch == '-') { // #2
+                if (i > 0 && s.charAt(i - 1) != 'E' && s.charAt(i - 1) != 'e') {
+                    return false;
+                }
+            } else if (ch == 'E' || ch == 'e') { // #3
+                if (seenExponent || !seenDigit) {
+                    return false;
+                } else {
+                    seenExponent = true;
+                    seenDigit = false;
+                   
+                }
+            } else {
+                return false;
+            }
+        }
+        
+        return seenDigit; // #5
+    }
+}
