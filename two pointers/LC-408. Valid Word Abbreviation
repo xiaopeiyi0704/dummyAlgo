@@ -1,0 +1,40 @@
+/*observation
+1 abbrevation - non-empty - do not replace empty char(or leading zero)
+2 abbravation - non-adjacent - if current char is digit and next is also digit, consider them as a whole number
+#1 #2 simplifies the problem, it means once see digit, the whole digit is the value(no need to try different digit substring combination - no backtracking).
+Also tell us no need to think about empty char case
+
+3 two pointer at each string, follow the abbrevated string and #1 #2 rule, check if word can be encoded to abbrevated string
+  if both letter, should be same
+  any digit, no leading zero
+  if one letter, one digit follow #2, and skip chars in word based on the whole digit value in abbr
+*/
+class Solution {
+    public boolean validWordAbbreviation(String word, String abbr) {
+        
+        int index1 = 0;
+        int index2 = 0;
+        
+        while (index1 < word.length() && index2 < abbr.length()) {
+            
+            if (!Character.isDigit(abbr.charAt(index2))) { // if both letter, should be same
+                if (word.charAt(index1) != abbr.charAt(index2)) return false;
+                index1++;
+                index2++;
+            } else {
+                if (abbr.charAt(index2) == '0') return false; // any digit, no leading zero
+                
+                int count = 0;
+                // if one letter, one digit follow #2, and skip chars in word based on the whole digit value in abbr
+                while(index2 < abbr.length() && Character.isDigit(abbr.charAt(index2))) { 
+                    count = count * 10 + (int)abbr.charAt(index2) - '0';
+                    index2++;
+                }
+                
+                index1+= count;
+            }
+        }
+        
+        return index1 == word.length() && index2 == abbr.length();
+    }
+}

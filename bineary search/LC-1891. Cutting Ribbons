@@ -1,0 +1,52 @@
+/*observation
+k is quantity of ribbon with same length after cut
+return is max possible length after cut to meet k quantity
+binary search 
+
+why binary search pop up in my head? - 
+    I just want to try all the length and try which one can meet k - binary search
+    Since try to get the max length of all the cases that can meet k - get right bound
+
+so try to give a length - mid, and see how many ribbons can be cut into mid length
+if euqal or more than k, then there is possibility the ribbons can be cut longer(for the max)
+if < k, then means the given mid is too long, need to try smaller length to cut
+*/
+//tc: get max n, binary search is logmax, in each binary search, calculate count is n, total is n + nlogmax
+//sc: 1
+class Solution {
+    public int maxLength(int[] ribbons, int k) {
+        int max = Integer.MIN_VALUE;
+        
+        for(int ribbon: ribbons) {
+            max = Math.max(max, ribbon);
+        }
+        
+        int left = 1;
+        int right = max;
+        int res = -1;
+        while(left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            int count = getCount(ribbons, mid);
+            
+            if(count >= k) {
+                res = mid;
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return res == -1 ? 0 : res;
+    }
+    
+    private int getCount(int[] ribbons, int len) {
+        int count = 0;
+        
+        for (int ribbon: ribbons) {
+            count+= ribbon / len;
+        }
+        
+        return count;
+    }
+}

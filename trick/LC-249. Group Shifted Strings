@@ -1,0 +1,43 @@
+/*observation
+string can be shifted to the same string because 
+    they have same length
+    they have same gap between chars
+    they have "same order" - abc bcd same group, dcb edc also same group they have to have same order
+0 make a key(encoding) a string based on above rule
+1 group strings with same key
+2 how to cal the key? i + 1 - i to get the diff, but how about cycle? az can shift to ba
+  TRICK- if two string can be shifted as same, then they have same distance to a word - (charAt(i+1) - charAt(i) + 26) % 26
+  Notice that we also have to do a mod of 26 on the resulting character for the circular shift.
+*/
+//tc: n * s
+class Solution {
+    public List<List<String>> groupStrings(String[] strings) {
+        
+        List<List<String>> res = new ArrayList<>();
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strings) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(str.length()).append(",");
+            for (int i = 0; i < str.length(); i++) {               
+                if (i + 1 < str.length()) {
+                    int val = (int)(str.charAt(i + 1) - '0') - (int)(str.charAt(i) - '0');
+                    val = (val + 26) % 26; // #2
+                    sb.append(val).append(","); // #1
+                    
+                } else {
+                    sb.append("0");
+                }
+            }
+            String key = sb.toString(); // #1
+            map.putIfAbsent(key, new ArrayList<>()); // #1
+            map.get(key).add(str);
+            
+        }
+                
+        for(Map.Entry<String, List<String>> p : map.entrySet()) {
+            res.add(p.getValue());
+        }
+        
+        return res;
+    }
+}

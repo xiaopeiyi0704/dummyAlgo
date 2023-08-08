@@ -1,0 +1,60 @@
+// seems like it is not like 3D memo array since the TC is high
+// Let's convert this question to 2D array - how?
+// let's convert this question to minum remove to make string s palindrome, if it is <= k, then true. Then we get rid of a dimesion.
+// TC: n^2
+// SC: n^2 + n recursion stack
+class Solution {
+    Integer[][] memo;
+    public boolean isValidPalindrome(String s, int k) {
+        memo = new Integer[s.length()][s.length()];
+        return isPalindrome(s, 0, s.length() - 1) <= k;
+    }
+    
+    private int isPalindrome(String s, int left, int right) {
+        
+        if (left >= right) return 0;
+        
+        if (memo[left][right] != null) return memo[left][right];
+        
+        int option1 = Integer.MAX_VALUE;
+        int option2 = Integer.MAX_VALUE;
+        if (s.charAt(left) == s.charAt(right)) {
+           option1 = isPalindrome(s, left + 1, right - 1);
+        } else {
+            
+           option1 = isPalindrome(s, left + 1, right) + 1;
+           option2 = isPalindrome(s, left, right - 1) + 1;
+            
+        }
+        
+       return memo[left][right] = Math.min(option1, option2);
+    }
+}
+
+/* This is TLE - I tried to put memo[s.length()][s.length()][k + 1], but still TLE
+//tc: 2^n/k
+//sc: n recursion stack
+class Solution {
+    public boolean isValidPalindrome(String s, int k) {
+        
+        return isPalindrome(s, 0, s.length() - 1, k);
+    }
+    
+    private boolean isPalindrome(String s, int left, int right, int k) {
+        
+        if (left >= right) return true;
+        
+        
+        if (s.charAt(left) == s.charAt(right)) {
+           return isPalindrome(s, left + 1, right - 1, k);
+        } else {
+            if (k > 0) {
+                return isPalindrome(s, left + 1, right, k - 1) || isPalindrome(s, left, right - 1, k - 1);
+            }
+        }
+        
+       return false;
+    }
+}
+*/
+

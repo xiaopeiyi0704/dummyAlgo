@@ -1,0 +1,43 @@
+/*observation
+chars in s should follow the order in order
+1 how to follow order? 
+  traverse order from let to right, if the char from order in s, then the char should come first in s 
+2 how to know if the char in s? - hashmap and we need to track the number of occurance of the char
+  since same char may appear multi times
+*/
+//tc: n + n + n
+//sc: map n, stringbuilder n
+class Solution {
+    public String customSortString(String order, String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        for(char ch : s.toCharArray()) {
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        
+        for(char ch : order.toCharArray()) {
+            if (map.containsKey(ch)) {
+                int count = map.get(ch);
+                for(int i = 1; i <= count; ++i){
+                    sb.append(ch);
+                    map.put(ch, map.get(ch) - 1);
+                    if (map.get(ch) == 0) {
+                        map.remove(ch);
+                    }
+                }
+            }
+        }
+        
+        for (Map.Entry<Character, Integer> p : map.entrySet()) {
+            char ch = p.getKey();
+            int count = p.getValue();
+            for(int i = 1; i <= count; ++i){
+                sb.append(ch);
+            }
+            
+        }
+        
+        return sb.toString();
+    }
+}
