@@ -1,0 +1,60 @@
+/*observation
+dislikes person cannot next to each other
+so build a graph and try to fill dislike people with different color(true and false)
+it is not possible when there is confliction for filling color
+*/
+
+// tc: e + v
+// sc: e + v for traverse, e + v for graph
+class Solution {
+    public boolean possibleBipartition(int n, int[][] dislikes) {
+        List<Integer>[] graph = buildGraph(n, dislikes); // build a graph for traverse from vertex to its dislikes for fill the color
+        Boolean[] color = new Boolean[n + 1]; // two color true and false
+        
+        // need to try all the vertex, because we do not know which one has dislike relationship with other. But once ever filled color, we do not need to try
+        for(int i = 1; i <= n; i++) {
+            if(color[i] == null) {
+               color[i] = true; // fill with color and start from i to fill dislikes
+               boolean isPossible = traverse(graph, color, i);
+               if(!isPossible) return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private boolean traverse(List<Integer>[] graph, Boolean[] color, int v) {
+        
+        boolean res = true;
+        for(int n: graph[v]) { // try all dislikes persons
+            if(color[n] == null) { // if not filled, fill with opposite color, since they dislike each other
+                color[n] = !color[v]; // fill with opposite color, since they dislike each other
+                res = traverse(graph, color, n); // dfs, from the dislike person go deep
+                if(!res) return false; // if not possible, return false and stop
+            } else {
+                if (color[n] == color[v]) return false; // false when dislike people have same color
+            }
+        }
+        
+        return res;
+    }
+    
+    // build a graph for traverse from vertex to its dislikes for fill the color
+    private List<Integer>[] buildGraph(int n, int[][] dislikes) {
+        List<Integer>[] graph = new List[n + 1];
+        
+        for(int i = 1; i <= n; i++) {
+            graph[i] = new ArrayList<Integer>();
+        }
+        
+        for(int[] edge: dislikes) {
+            int from = edge[0];
+            int to = edge[1];
+            
+            graph[from].add(to); // bidirection
+            graph[to].add(from);
+        }
+        
+        return graph;
+    }
+}

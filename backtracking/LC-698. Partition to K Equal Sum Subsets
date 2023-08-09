@@ -1,0 +1,50 @@
+class Solution {
+    int[] used;
+    HashMap<String, Boolean> memo;
+    
+    public boolean canPartitionKSubsets(int[] nums, int k) {
+        used = new int[nums.length];
+        memo = new HashMap<>();
+        
+        int total = 0;
+        for(int n: nums) {
+            total+= n;
+        }
+        
+        if(total % k != 0) {
+            return false;
+        }
+        
+        return canPartition(nums, 0, total / k, 0,  k);
+    }
+    
+    private boolean canPartition(int[] nums, int index, int target, int sum, int k){
+        if(k == 0) return true;
+        
+        if(k == 0) return false;
+        
+        String key = Arrays.toString(used);
+        if (memo.containsKey(key)) return memo.get(key);
+        
+        if(target == sum) {
+            boolean res = canPartition(nums, 0, target, 0,  k - 1);;
+            memo.put(key, res);
+            return res;
+        }
+        
+        boolean result = false;
+        for(int i = index; i < nums.length; i++) {
+            if(used[i] == 1) continue;
+            
+            if(sum + nums[i] > target) continue;
+        
+            used[i] = 1;
+            result = canPartition(nums, i + 1, target, sum + nums[i],  k);
+            used[i] = 0;
+            
+            if(result) return true;
+        }
+        memo.put(key, false);
+        return false;
+    }
+}

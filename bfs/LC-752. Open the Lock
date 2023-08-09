@@ -1,0 +1,74 @@
+/*observation
+min turn means you know the code, and how many steps needed to turn to the code
+from "0000", a step is get all the possible code from "0000" - one step
+then from each code get from "0000" to get all the possible code - two step
+....
+BFS! - the min is the steps to reach target - NOT how many code you tried!
+*/
+//tn: There are 10 x 10 x 10 x 10 possible combinations => 10^4 => A^N
+//    in each combination, there is 4(N) times for loop, in each for loop there is a toString(), which is 4(N). So total is A^N * N * N
+class Solution {
+    public int openLock(String[] deadends, String target) {
+        
+        Set<String> set = new HashSet<>();
+        for(String str: deadends) {
+            set.add(str); 
+        }
+        if(set.contains("0000")) return -1; // corner case if "0000" is in deadends
+        
+        Queue<String> q = new LinkedList<>();
+        q.add("0000"); // start from 0000
+        int step = 0;
+        
+        while(!q.isEmpty()) {
+            int size = q.size();
+            
+            for(int c = 0; c < size; c++) {
+                String cur = q.poll();
+                
+                if(cur.equals(target)) return step; // meet target return it is the min value
+                
+                // turn up and turn down to get codes for next step
+                for (int i = 0; i < 4; i++) {
+                    StringBuilder sb = new StringBuilder(cur);
+                    char ch = sb.charAt(i);
+                    int num = ch - '0';
+                    
+                    //go up
+                    if (num == 9) {
+                        sb.setCharAt(i, '0');
+                    } else {
+                        int up = num + 1;
+                        sb.setCharAt(i, (char)(up + '0'));
+                    }
+                    String upStr = sb.toString();
+                    if (!set.contains(upStr)) {
+                        q.add(upStr);
+                        set.add(upStr);
+                    }
+                    
+                    sb = new StringBuilder(cur);
+                    
+                    //go dwon
+                    if (num == 0) {
+                        sb.setCharAt(i, '9');
+                    } else {
+                        int down = num - 1;
+                        sb.setCharAt(i, (char)(down + '0'));
+                    }
+                    String downStr = sb.toString();
+                    if (!set.contains(downStr)) {
+                        q.add(downStr);
+                        set.add(downStr);
+                    }
+ 
+                }
+            }
+            step++;
+        }
+        
+        return -1;
+    }
+    
+  
+}
