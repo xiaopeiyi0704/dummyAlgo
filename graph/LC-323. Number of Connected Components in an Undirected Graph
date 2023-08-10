@@ -1,0 +1,53 @@
+/*observation
+count how many groups
+1 inital each node itself is a group
+2 connect nodes with edges to form a bigger group and total group--
+3 if A = B, B = C, then A = C
+union find!
+*/
+//tc: n, find method give O(1) since we compress the path
+//sc: n for parent
+class Solution {
+    public int countComponents(int n, int[][] edges) {
+        int[] parent = new int[n];
+
+        for(int i = 0; i < n; i++) {
+          parent[i] = i;
+        }
+        int group = n;
+
+        for(int[] edge: edges) {
+          int a = edge[0];
+          int b = edge[1];
+
+          if(!isConnected(a, b, parent)) {
+            union(a, b, parent);
+            group--;
+          }
+        }
+
+        return group;
+    }
+
+    private boolean isConnected(int a, int b, int[] parent) {
+      int rootA = find(a, parent);
+      int rootB = find(b, parent);
+
+      return rootA == rootB;
+    }
+
+    private void union(int a, int b, int[] parent) {
+      int rootA = find(a, parent);
+      int rootB = find(b, parent);
+
+      if(rootA != rootB) parent[rootB] = rootA;
+    }
+
+    private int find(int a, int[] parent) {
+      if(a != parent[a]) {
+        parent[a] = find(parent[a], parent);
+      }
+
+      return parent[a];
+    }
+}

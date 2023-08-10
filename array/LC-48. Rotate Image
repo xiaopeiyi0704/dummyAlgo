@@ -1,0 +1,28 @@
+// along diagnal swap, then reverse each cell in the row
+class Solution {
+    public void rotate(int[][] matrix) {
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = i; j < matrix.length; j++) {
+                swap(matrix, i, j);
+            }
+        }
+        
+        for(int i = 0; i < matrix.length; i++) {
+            int left = 0;
+            int right = matrix.length - 1;
+            while(left < right) {
+                int temp = matrix[i][left];
+                matrix[i][left] = matrix[i][right];
+                matrix[i][right] = temp;
+                left++;
+                right--;
+            }
+        }
+    }
+    
+    private void swap(int[][] mat, int row, int col) {
+        int temp = mat[row][col];
+        mat[row][col] = mat[col][row];
+        mat[col][row] = temp;
+    }
+}

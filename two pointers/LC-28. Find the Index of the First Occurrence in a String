@@ -1,0 +1,30 @@
+class Solution {
+    public int strStr(String haystack, String needle) {
+        long target = 0;
+        for(int i = 0; i < needle.length(); i++) {
+            target = target * 26 + (int) needle.charAt(i) - 'a';
+        }
+        
+        int left = 0;
+        int right = 0;
+        int len = needle.length();
+        
+        long cur = 0;
+        while(right < haystack.length()) {
+            char ch = haystack.charAt(right);
+            right++;
+            
+            cur = cur * 26 + (int)ch - 'a';
+            
+            if(right - left == len) {
+                if (cur == target) return left;
+                
+                int leftNum = (int)haystack.charAt(left) - 'a';
+                cur = cur - leftNum * (long)Math.pow(26, len - 1);
+                left++;
+            }
+        }
+        
+        return -1;
+    }
+}

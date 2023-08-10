@@ -1,0 +1,42 @@
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        Map<Character, Integer> needMap = new HashMap<>();
+        for(char c: s1.toCharArray()) {
+            needMap.put(c, needMap.getOrDefault(c, 0) + 1);
+        }
+        int need = needMap.size();
+        int left = 0;
+        int right = 0;
+        int cur = 0;
+        Map<Character, Integer> window = new HashMap<>();
+        
+        while(right < s2.length()) {
+            char ch = s2.charAt(right);
+            right++;
+            
+            if(needMap.containsKey(ch)) {
+                window.put(ch, window.getOrDefault(ch, 0) + 1);
+                if(window.get(ch).equals(needMap.get(ch))) {
+                    cur++;
+                }
+            }
+            
+            if(cur == need) return true;
+            
+            if(right - left == s1.length()) {
+                char c = s2.charAt(left);
+                if(window.containsKey(c)) {
+                    if(window.get(c).equals(needMap.get(c))) {
+                        cur--;
+                        
+                    }
+                    window.put(c, window.get(c) - 1);
+                }
+                left++;
+            }
+            
+        }
+        
+        return false;
+    }
+}

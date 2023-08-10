@@ -1,0 +1,26 @@
+class Solution {
+    Integer[] memo;
+    public int coinChange(int[] coins, int amount) {
+        memo = new Integer[amount + 1];
+        int res = dfs(coins, amount);
+        
+        return res == Integer.MAX_VALUE ? -1 : res;
+    }
+    
+    private int dfs(int[] coins, int amount) {
+        if(0 == amount) return 0;
+        
+        if(0 > amount) return Integer.MAX_VALUE;
+        
+        if(memo[amount] != null) return memo[amount];
+        
+        int res = Integer.MAX_VALUE;
+        for(int i = 0; i < coins.length; i++) {
+            int sub = dfs(coins, amount - coins[i]);
+            if(sub == Integer.MAX_VALUE) continue;
+            res = Math.min(res, sub + 1);
+        }
+        
+        return memo[amount] = res;
+    }
+}
