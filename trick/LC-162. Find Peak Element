@@ -1,6 +1,6 @@
 /*observation
 This question has three very importance pieces of information
-1 nums[i] > nums[-1] and nums[i] > nums[length] - as long as nums[0] > nums[1] or nums[length - 1] > nums[length - 2] then nums[0] or nums[length - 1] is peak
+1 nums[i] > nums[i - 1] and nums[i] > nums[i + 1] - as long as nums[0] > nums[1] or nums[length - 1] > nums[length - 2] then nums[0] or nums[length - 1] is peak
 2 nums[i] != nums[i + 1] for all valid i - adjacent two elements cannot be same
 3 You must write an algorithm that runs in O(log n) time - binery search -
 
