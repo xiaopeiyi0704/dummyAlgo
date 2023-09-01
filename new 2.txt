@@ -1,0 +1,35 @@
+1 Tell about yourself
+
+2 tell me about a time you disagreed with someone
+
+3 tell me about a time you showed leadership
+
+4 tell me about a time you failed or made a mistake
+
+5 tell me about your strenth
+
+6 tell me a time you disagreed with someone
+
+7 tell me a project that you are most proud of
+
+8 tell me about a time you had to manage conflcting priorities
+
+9 any question for interviewer
+
+10 tell me a time you drive a propsal to a client
+
+11 tell me a time about coached a low performer
+
+12 tell me a time you have to pitch an idea to gain other's commitment
+
+13 tell me a project here you had failure, and how did you go about it
+
+14 tell me about a team project you worked on
+
+15 tell me about a time you come up new approch to a problem
+
+16 tell me about a time you are not able to meet timeline, why?
+
+17 tell me about a time you faced a conflict while working on a team, how do you handle it?
+
+

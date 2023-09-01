@@ -1,0 +1,59 @@
+//pq for word log with word log sort rule
+//list for digit log with insert/relative order
+//tc: traverse logs array n, mlogm 
+class Solution {
+    public String[] reorderLogFiles(String[] logs) {
+        String[] res = new String[logs.length];
+        
+        //for word log
+        PriorityQueue<WordLogWrapper> pq = new PriorityQueue<WordLogWrapper>(new Comparator<WordLogWrapper>(){
+            public int compare(WordLogWrapper a, WordLogWrapper b) {
+                if(a.log.compareTo(b.log) == 0) {
+                    return a.id.compareTo(b.id);
+                } else{
+                    return a.log.compareTo(b.log);
+                }
+            }
+        });
+        
+        //for digit log
+        List<String> list = new ArrayList<>();
+        
+        for(String log: logs) {
+            if(isDigitLog(log)){
+                list.add(log);
+            } else{
+                pq.add(new WordLogWrapper(log));
+            }
+        }
+        int index = 0;
+        while(pq.size() > 0) {
+            res[index] = pq.poll().s;
+            index++;
+        }
+        
+        for(int i = 0; i < list.size(); i++) {
+            res[index] = list.get(i);
+            index++;
+        }
+        
+        return res;
+    }
+    
+    private boolean isDigitLog(String log) {
+        return Character.isDigit(log.charAt(log.length() - 1));
+    }
+}
+
+class WordLogWrapper{
+    String id;
+    String log;
+    String s;
+    
+    public WordLogWrapper(String s) {
+        String[] str = s.split("\\s+");
+        this.id = str[0];
+        this.log = s.substring(str[0].length() + 1);
+        this.s = s;
+    }
+}

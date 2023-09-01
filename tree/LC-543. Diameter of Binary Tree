@@ -1,0 +1,23 @@
+// use postorder - when get out of a node, what do you do.
+// when get out of a node, check current "length" - left + right, compare with max, keep the bigger one
+// when return, will keep checking in upper level, we return the longer path - either right or left, and do not forget add 1 for current root
+class Solution {
+    int max = 0;
+    public int diameterOfBinaryTree(TreeNode root) {
+        
+        traverse(root);
+        
+        return max;
+    }
+    
+    private int traverse(TreeNode root) {
+        if(root == null) return 0;
+        
+        int left = traverse(root.left);
+        int right = traverse(root.right);
+        
+        max = Math.max(left + right, max);
+        
+        return Math.max(left, right) + 1;
+    }
+}

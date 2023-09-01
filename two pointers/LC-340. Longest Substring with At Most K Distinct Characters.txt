@@ -1,0 +1,38 @@
+//sliding window
+//to get distinct chars, we need group all the chars - use hashmap, then based on map size we know how many distinct characters
+//then do sliding window, if meet new distinct char and meet k requirement, then we need to kick out chars in map - kick out the left side chars until # of chars < k
+//tc: n
+//sc: n
+class Solution {
+    public int lengthOfLongestSubstringKDistinct(String s, int k) {
+        
+        if(k == 0) return 0;
+        
+        Map<Character, Integer> countMap = new HashMap<>();
+        
+        int res = 0;
+        int left = 0;
+        int right = 0;
+        
+        while(right < s.length()) {
+            char ch = s.charAt(right);
+            right++;
+            
+            if(countMap.containsKey(ch)) {
+                countMap.put(ch, countMap.get(ch) + 1);
+            } else {
+                while(countMap.size() == k) {
+                    char c = s.charAt(left);
+                    left++;
+                    countMap.put(c, countMap.get(c) - 1);
+                    if(countMap.get(c) == 0) countMap.remove(c);
+                }
+                countMap.put(ch, countMap.getOrDefault(ch, 0) + 1);
+            }
+            res = Math.max(res, right - left);
+            
+        }
+        
+        return res;
+    }
+}

@@ -1,0 +1,74 @@
+class Trie {
+    Node root;
+    Map<String, Integer> countMap;
+    public Trie() {
+        root = new Node();
+        countMap = new HashMap<>();
+    }
+    
+    public void insert(String word) {
+        Node ptr = root;
+
+        for(char ch: word.toCharArray()) {
+            Node node = ptr.children[ch - 'a'];
+            if(node == null) {
+                Node newNode = new Node();
+
+                ptr.children[ch - 'a'] = newNode;
+            }
+            ptr = ptr.children[ch - 'a'];
+           
+            ptr.count+= 1;
+        }
+        ptr.isWord = true;
+
+        countMap.put(word, countMap.getOrDefault(word, 0) + 1);
+    }
+    
+    public int countWordsEqualTo(String word) {
+        if(countMap.containsKey(word)) return countMap.get(word);
+        
+        return 0;
+    }
+    
+    public int countWordsStartingWith(String prefix) {
+        Node ptr = root;
+
+        for(char ch: prefix.toCharArray()) {
+            Node node = ptr.children[ch - 'a'];
+            if(node == null) {
+                return 0;
+            }
+
+            ptr = ptr.children[ch - 'a'];     
+        }
+        
+        return ptr.count;
+    }
+    
+    public void erase(String word) {
+        countMap.put(word, countMap.get(word) - 1);
+        if(countMap.get(word) == 0) {
+            countMap.remove(word);
+        }
+
+        Node ptr = root;
+
+        for(char ch: word.toCharArray()) {
+            ptr = ptr.children[ch - 'a'];
+            ptr.count--;
+        }
+        if(!countMap.containsKey(word)) ptr.isWord = false;
+    }
+}
+
+class Node {
+    Node[] children;
+    boolean isWord;
+    int count;
+    
+    public Node() {
+        this.children = new Node[26];
+        this.count = 0;
+    }
+}

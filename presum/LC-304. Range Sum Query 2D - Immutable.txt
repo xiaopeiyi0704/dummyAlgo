@@ -1,0 +1,25 @@
+//presum
+class NumMatrix {
+    int[][] presum;
+    public NumMatrix(int[][] matrix) {
+        presum = new int[matrix.length + 1][matrix[0].length + 1];
+        
+        for(int i = 1; i < presum.length; i++) {
+            for(int j = 1; j < presum[0].length; j++) {
+                presum[i][j] = presum[i - 1][j] + presum[i][j - 1] - presum[i - 1][j - 1] + matrix[i - 1][j - 1];
+            }
+        }
+    }
+    
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        //why +1 for everything? the give params is the index in matrix. But we try to find it in presum[][], which there is offset diff
+        int r1 = row2 + 1;
+        int c1 = col1 - 1 + 1;
+        int r2 = row1 - 1 + 1;
+        int c2 =  col2 + 1;
+        int r3 = row1 - 1 + 1;
+        int c3 = col1 - 1 + 1;
+    
+        return presum[row2 + 1][col2 + 1] - presum[r1][c1] - presum[r2][c2] + presum[r3][c3];
+    }
+}

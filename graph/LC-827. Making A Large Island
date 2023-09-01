@@ -1,0 +1,105 @@
+//uinon find - a lot details
+//tc: n^2 traverse array to do union find to group 1, n^2 to try flip all 0s in grid- total n^2 + n^2
+//sc: parent n^2, size n^2, set n^2 total 3n^2
+class Solution {
+    public int largestIsland(int[][] grid) {
+        int max = 0;
+        int[][] dxy = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        int n = grid.length;
+        int[] parent = new int[n * n];
+        int[] size = new int[n * n + 1];
+        for(int i = 0; i < parent.length; i++) {
+            parent[i] = i; // root is itself
+            size[i] = 1; // each root has 1 as default - itself
+        }
+        
+        //grouping - to get # of group and with known group size
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == 0) continue;
+                
+                int root = i * n + j;
+                
+                for(int d = 0; d < dxy.length; d++) {
+                    int x = i + dxy[d][0];
+                    int y = j + dxy[d][1];
+                    
+                    if(x < 0 || x >= n || y < 0 || y >= n || grid[x][y] == 0) {
+                        continue;
+                    }
+                    int code = x * n + y;
+                    if(!isConnected(root, code, parent)) {
+                        union(root, code, parent, size);
+                    }
+                    
+                }
+            }
+        }
+        
+        //check flip which 0 is better, if a 0 after flip to 1 can connect two island, then it is GOOD. find the largest connected island, if no such thing, find the largest existing island + 1
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == 1) { //just in case all 1 in the grid - if all 1 in grid then no chance to count flip 0's case. just check the island size
+                    max = Math.max(max, getSize(i * n + j, parent, size));
+                    continue;
+                }
+                // find 0, then try to flip this 0 and check what's the size after flip
+                
+                int root = i * n + j;
+                
+                //to avoid adjacent 1 from different direction belongs to same root
+                Set<Integer> set = new HashSet();
+                
+                int count = 0;
+                for(int d = 0; d < dxy.length; d++) {
+                    int x = i + dxy[d][0];
+                    int y = j + dxy[d][1];
+                    
+                    if(x < 0 || x >= n || y < 0 || y >= n || grid[x][y] == 0) {
+                        continue;
+                    }
+                    
+                    int code = x * n + y;
+                    int adjacentRoot = find(code, parent);
+                    if(set.contains(adjacentRoot)) continue;
+                    set.add(adjacentRoot);
+                    count+= getSize(code, parent, size);
+                }
+                max = Math.max(max, count + 1);
+            }
+        }
+        
+        return max;
+        
+    }
+    
+    private int getSize(int a, int[] parent, int[] size) {
+        int root = find(a, parent);
+        return size[root];
+    }
+    
+    private boolean isConnected(int a, int b, int[] parent) {
+        int rootA = find(a, parent);
+        int rootB = find(b, parent);
+        
+        return rootA == rootB;
+    }
+    
+    private void union(int a, int b, int[] parent, int[] size) {
+        int rootA = find(a, parent);
+        int rootB = find(b, parent);
+        if(rootA != rootB) {
+            parent[rootB] = rootA;
+            size[rootA]+= size[rootB]; // combine the size
+        }
+    }
+    
+    private int find(int a, int[] parent) {
+        if(a != parent[a]) {
+            parent[a] = find(parent[a], parent);
+        }
+        
+        return parent[a];
+    }
+    
+}

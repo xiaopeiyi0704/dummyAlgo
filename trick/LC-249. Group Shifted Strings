@@ -5,7 +5,7 @@ string can be shifted to the same string because
     they have "same order" - abc bcd same group, dcb edc also same group they have to have same order
 0 make a key(encoding) a string based on above rule
 1 group strings with same key
-2 how to cal the key? i + 1 - i to get the diff, but how about cycle? az can shift to ba
+2 how to cal the key? (i + 1) - (i) to get the gap, but how about cycle? az can shift to ba, so purely substract for gap check wont work in this case.
   TRICK- if two string can be shifted as same, then they have same distance to a word - (charAt(i+1) - charAt(i) + 26) % 26
   Notice that we also have to do a mod of 26 on the resulting character for the circular shift.
 */
@@ -24,9 +24,7 @@ class Solution {
                     val = (val + 26) % 26; // #2
                     sb.append(val).append(","); // #1
                     
-                } else {
-                    sb.append("0");
-                }
+                } 
             }
             String key = sb.toString(); // #1
             map.putIfAbsent(key, new ArrayList<>()); // #1

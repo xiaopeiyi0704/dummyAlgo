@@ -1,0 +1,100 @@
+
+class Solution {
+    public int longestWPI(int[] hours) {
+        int n = hours.length;
+        int presum = 0;
+
+        // 前缀和到索引的映射，方便快速查找所需的前缀和
+        HashMap<Integer, Integer> valToIndex = new HashMap<>();
+        int res = 0;
+        for (int i = 1; i <= n; i++) {
+            // 计算 nums[0..i-1] 的前缀和
+            presum+= hours[i - 1] > 8 ? 1 : -1;
+            // 如果这个前缀和还没有对应的索引，说明这个前缀和第一次出现，记录下来
+            if (!valToIndex.containsKey(presum)) {
+                valToIndex.put(presum, i);
+            }// else {
+                // 因为题目想找长度最大的子数组，valToIndex 中的索引应尽可能小，
+                // 所以这里什么都不做
+            //}
+
+            // 现在我们想找 hours[0..i-1] 中元素和大于 0 的子数组
+            // 这就要根据 preSum[i] 的正负分情况讨论了
+            if (presum > 0) {
+                // preSum[i] 为正，说明 hours[0..i-1] 都是「表现良好的时间段」
+                res = Math.max(res, i);
+            } else {
+                // preSum[i] 为负，需要寻找一个 j 使得 preSum[i] - preSum[j] > 0
+                // 考虑到我们的 preSum 数组每两个相邻元素的差的绝对值都是 1 且 j 应该尽可能小，
+                // what if ....-2.....0, in this case, look for 0 - 1, but not -1, only has -2, then you cannot find -1, and result is wrong..? That is NOT possible - how did you get -2? must -1 + (-1), so if -2 existing, then -1 must exist. 
+                // 那么只要找到 preSum[j] == preSum[i] - 1，nums[j+1..i] 就是一个「表现良好的时间段」
+                if (valToIndex.containsKey(presum - 1)) {
+                    int j = valToIndex.get(presum - 1);
+                    res = Math.max(res, i - j);
+                }
+            }
+        }
+        return res;
+    }
+}
+/*
+class Solution {
+    public int longestWPI(int[] hours) {
+        int n = hours.length;
+        int[] preSum = new int[n + 1];
+        preSum[0] = 0;
+        // 前缀和到索引的映射，方便快速查找所需的前缀和
+        HashMap<Integer, Integer> valToIndex = new HashMap<>();
+        int res = 0;
+        for (int i = 1; i <= n; i++) {
+            // 计算 nums[0..i-1] 的前缀和
+            preSum[i] = preSum[i - 1] + (hours[i - 1] > 8 ? 1 : -1);
+            // 如果这个前缀和还没有对应的索引，说明这个前缀和第一次出现，记录下来
+            if (!valToIndex.containsKey(preSum[i])) {
+                valToIndex.put(preSum[i], i);
+            } //else {
+                // 因为题目想找长度最大的子数组，valToIndex 中的索引应尽可能小，
+                // 所以这里什么都不做
+            //}
+
+            // 现在我们想找 hours[0..i-1] 中元素和大于 0 的子数组
+            // 这就要根据 preSum[i] 的正负分情况讨论了
+            if (preSum[i] > 0) {
+                // preSum[i] 为正，说明 hours[0..i-1] 都是「表现良好的时间段」
+                res = Math.max(res, i);
+            } else {
+                // preSum[i] 为负，需要寻找一个 j 使得 preSum[i] - preSum[j] > 0
+                // 考虑到我们的 preSum 数组每两个相邻元素的差的绝对值都是 1 且 j 应该尽可能小，
+                // what if ....-2.....0, in this case, look for 0 - 1, but not -1, only has -2, then you cannot find -1, and result is wrong..? That is NOT possible - how did you get -2? must -1 + (-1), so if -2 existing, then -1 must exist. 
+                // 那么只要找到 preSum[j] == preSum[i] - 1，nums[j+1..i] 就是一个「表现良好的时间段」
+                if (valToIndex.containsKey(preSum[i] - 1)) {
+                    int j = valToIndex.get(preSum[i] - 1);
+                    res = Math.max(res, i - j);
+                }
+            }
+        }
+        return res;
+    }
+}
+*/
+/*
+class Solution {
+    public int longestWPI(int[] hours) {
+        int[] tiringMark = new int[hours.length];
+        for(int i = 0; i < hours.length; i++) {
+            tiringMark[i] = hours[i] > 8 ? 1: 0;
+        }
+        
+        int max = 0;
+        for(int i = 0; i < tiringMark.length; i++) {
+            int count = 0;
+            for(int j = i; j < tiringMark.length; j++) {
+                count+= tiringMark[j];
+                if((j - i + 1)/2 < count) max = Math.max(max, j - i + 1);
+            }
+        }
+        
+        return max;
+    }
+}
+*/

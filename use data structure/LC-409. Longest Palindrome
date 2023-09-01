@@ -1,0 +1,21 @@
+//palindrome appears in pair, so use set to track what has appeared, once appear again, then that is a pair - add 2. Do NOT forget remove the existing one from set
+//palindrome also can be odd number, so after checked all the pair, if still has something left in set, pick one be the one in the middle of the palindrome, so add 1.
+class Solution {
+    public int longestPalindrome(String s) {
+        Set<Character> set = new HashSet<>();
+        int count = 0;
+        
+        for(char ch: s.toCharArray()) {
+            if(set.contains(ch)) {
+                set.remove(ch);
+                count+= 2;
+            } else{
+                set.add(ch);
+            }
+        }
+        
+        if(set.size() > 0) count++;
+        
+        return count;
+    }
+}
