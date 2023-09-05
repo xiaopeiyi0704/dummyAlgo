@@ -1,0 +1,37 @@
+//use presum to avoid n^2(n^2 because, each time need to sum numbers together for second part)
+//trick part is
+//          -long type, since presum value of a lot in can be super big
+//          -the boundary, how to count # of elements in second part
+//          -when #count of second part is 0, it cannot do divid xx/0
+//tc: n + n
+//sc: n
+class Solution {
+    public int minimumAverageDifference(int[] nums) {
+        long[] presum = new long[nums.length + 1];
+        
+        for(int i = 1; i < presum.length; i++) {
+            presum[i] = presum[i - 1] + nums[i - 1];
+        }
+        
+        long min = Integer.MAX_VALUE;
+        int res = -1;
+        for(int i = 1; i < presum.length; i++) {
+            long first = presum[i];  
+            int firstCount = i;
+            long firstAve = first/firstCount;
+            
+            long second = presum[presum.length - 1] - presum[i];
+            int secondCount = presum.length - i - 1;
+            long secondAve = secondCount == 0 ? 0 : second/secondCount;
+            
+            long diff = Math.abs(firstAve - secondAve);
+            if(min > diff) {
+                res = i - 1;
+                min = Math.min(min, diff); 
+            }
+                       
+        }
+        
+        return res;
+    }
+}
