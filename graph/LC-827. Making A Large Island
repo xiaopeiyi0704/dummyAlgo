@@ -7,7 +7,7 @@ class Solution {
         int[][] dxy = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
         int n = grid.length;
         int[] parent = new int[n * n];
-        int[] size = new int[n * n + 1];
+        int[] size = new int[n * n + 1]; // +1 because this is actual value, if size is 10, cannot represent in 0 - 9 indexed array
         for(int i = 0; i < parent.length; i++) {
             parent[i] = i; // root is itself
             size[i] = 1; // each root has 1 as default - itself

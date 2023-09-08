@@ -1,0 +1,44 @@
+class Solution {
+    public List<List<Integer>> findMissingRanges(int[] nums, int lower, int upper) {
+        List<List<Integer>> res = new ArrayList<>();
+        if(nums.length == 0) { // e.g [] 1, 2
+            List<Integer> list = new ArrayList<>();
+            list.add(lower);
+            list.add(upper);
+            res.add(list);
+            return res;
+        }
+        Stack<Integer> q = new Stack<>();
+        
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] < lower) continue;
+            if(nums[i] > lower && nums[i] <= upper && q.size() == 0) {
+                List<Integer> list = new ArrayList<>();
+                list.add(lower);
+                list.add(nums[i] - 1);
+                res.add(list);
+            } else if(nums[i] > lower && nums[i] <= upper && nums[i] - q.peek() > 1) {
+                List<Integer> list = new ArrayList<>();
+                list.add(q.peek() + 1);
+                list.add(nums[i] - 1);
+                res.add(list);
+            } else if(nums[i] > upper && q.peek() < upper) {
+                List<Integer> list = new ArrayList<>();
+                list.add(q.peek() + 1);
+                list.add(upper);
+                res.add(list);
+                return res;
+            }
+            q.add(nums[i]);
+           
+        }
+        if(q.size() > 0 && q.peek() != upper) {
+            List<Integer> list = new ArrayList<>();
+            list.add(q.peek() + 1);
+            list.add(upper);
+            res.add(list);
+        }
+        
+        return res;
+    }
+}

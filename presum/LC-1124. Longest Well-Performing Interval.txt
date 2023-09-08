@@ -26,7 +26,7 @@ class Solution {
             } else {
                 // preSum[i] 为负，需要寻找一个 j 使得 preSum[i] - preSum[j] > 0
                 // 考虑到我们的 preSum 数组每两个相邻元素的差的绝对值都是 1 且 j 应该尽可能小，
-                // what if ....-2.....0, in this case, look for 0 - 1, but not -1, only has -2, then you cannot find -1, and result is wrong..? That is NOT possible - how did you get -2? must -1 + (-1), so if -2 existing, then -1 must exist. 
+                // what if ....-2.....0, in this case, look for 0 - 1, but no -1, only has -2, then you cannot find -1, and result is wrong..? That is NOT possible - how did you get -2? must -1 + (-1), so if -2 existing, then -1 must exist. 
                 // 那么只要找到 preSum[j] == preSum[i] - 1，nums[j+1..i] 就是一个「表现良好的时间段」
                 if (valToIndex.containsKey(presum - 1)) {
                     int j = valToIndex.get(presum - 1);
