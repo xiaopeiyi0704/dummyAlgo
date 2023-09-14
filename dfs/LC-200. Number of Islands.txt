@@ -1,0 +1,87 @@
+//bfs
+// traverse all the grid
+// after visited then mark the cell to '0' to avoid visit again
+// tc: mn for traverse whole grid
+// sc: mn for find start point of each island
+class Solution {
+    int[][] dxy = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    public int numIslands(char[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        
+        // for record # of island
+        int count = 0;
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == '1') {
+                    bfs(grid, i, j, m, n);
+                    count++; //each dfs call is an island
+                }
+            }
+        }
+        return count;
+    }
+    
+    private void bfs(char[][] grid, int row, int col, int m, int n) {
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[]{row, col});
+        grid[row][col] = '0'; // once visited, mark as 0 to indicate it is visited
+        
+        while(!q.isEmpty()) {
+            int[] cur = q.poll();
+            for(int d = 0; d < dxy.length; d++) { // four direction
+                int x = cur[0] + dxy[d][0];
+                int y = cur[1] + dxy[d][1];
+
+                if(x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == '1') {
+                    grid[x][y] = '0';
+                    bfs(grid, x, y, m, n);
+                }
+            }            
+        }
+    }
+}
+
+
+/*
+//dfs
+// traverse all the grid
+// after visited then mark the cell to '0' to avoid visit again
+// tc: mn for traverse whole grid
+// sc: mn recursion call stack, mn for find start point of each island
+class Solution {
+    int[][] dxy = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    public int numIslands(char[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        
+        // for record # of island
+        int count = 0;
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == '1') {
+                    dfs(grid, i, j, m, n);
+                    count++; //each dfs call is an island
+                }
+            }
+        }
+        return count;
+    }
+    
+    
+    private void dfs(char[][] grid, int row, int col, int m, int n) {
+        
+        grid[row][col] = '0'; // once visited, mark as 0 to indicate it is visited
+        
+        for(int d = 0; d < dxy.length; d++) { // four direction
+            int x = row + dxy[d][0];
+            int y = col + dxy[d][1];
+            
+            if(x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == '1') {
+                dfs(grid, x, y, m, n);
+            }
+        }
+        
+    }
+}
+*/

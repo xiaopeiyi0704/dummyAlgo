@@ -1,0 +1,93 @@
+// when current 0, number of ways = # of 1 on the left of current * # of 1 on the right of current
+// when current 1, number of ways = # of 0 on the left of current * # of 0 on the right of current
+// total = add all above cases index by index of s
+// tc: n
+class Solution {
+    public long numberOfWays(String s) {
+        int zeroOnRight = 0;
+        int oneOnRight = 0;
+        
+        for(int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) == '0') {
+                zeroOnRight++;
+            } else{
+                oneOnRight++;
+            }
+        }
+        
+        int zerorOnLeft = 0;
+        int oneOnLeft = 0;
+        long count = 0;
+        
+        for(int i = 0; i < s.length(); i++) {
+            char cur = s.charAt(i);
+            if(cur == '0') {
+                zeroOnRight--;
+                zerorOnLeft++;
+                count+= oneOnLeft * oneOnRight;
+                
+            } else{
+                oneOnRight--;
+                oneOnLeft++;
+                count+= zerorOnLeft * zeroOnRight;
+            }
+        }
+        
+        return count;
+    }
+}
+/*
+// dp top down - TLE
+// n ^ 2 ^ 3
+class Solution {
+    Long[][][] memo; // 1st [] for s.length(); 2nd [] for prev char 0, 1 or 2(not pick anything yet); 3rd [] for total picked count
+    public long numberOfWays(String s) {
+        memo = new Long[s.length()][3][4] ;
+        return dfs(s,'2',0, 0);
+    }
+
+    public long dfs(String s, char prev, int index, int count) {
+        if(count == 3) return 1;
+        if(index >= s.length()) return 0;
+        
+        if(memo[index][prev - '0'][count] != null) return memo[index][prev - '0'][count];
+        
+        long notPick = dfs(s, prev, index + 1, count);
+        long pick = 0;
+        if(s.charAt(index) != prev){
+            pick = dfs(s, s.charAt(index), index + 1, count + 1);
+        }
+        
+        return memo[index][prev-'0'][count] = pick + notPick;
+    }
+}
+*/
+/*
+// backtrack 2^n
+class Solution {
+    int count = 0;
+    public long numberOfWays(String s) {
+        
+        backtracking(s, 0, new LinkedList<Character>());
+        return count;
+    }
+    
+    
+    private void backtracking(String s, int index, LinkedList<Character> list) {
+        if(list.size() == 3) {
+            count++;
+            return;
+        }
+        
+        for(int i = index; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if(list.size() > 0 && list.get(list.size() - 1) == ch) continue;
+            
+            list.add(ch);
+            backtracking(s, i + 1, list);
+            list.removeLast();
+        }
+    }
+}
+
+*/
