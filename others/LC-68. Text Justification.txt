@@ -1,0 +1,94 @@
+// 1 determine the words should be in the same line
+// 2 cal space of each line between words - evenly distributed e.g 4 words, 3 spaces between them, maxWidth is 8, then 3, 3, 2 allocated - "Extra spaces between words should be distributed as evenly as possible. If the number of spaces on a line does not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right."
+// 3 last line - each word separated by ONLY 1 space, leave rest of the space in the end - "For the last line of text, it should be left-justified, and no extra space is inserted between words."
+// tc: words length is n. traverse words is n, traverse lines is n. total is n
+// sc: res is maxWdith * lines + all lines, which is n. total is n + maxWdith * lines
+class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        
+        List<String> res = new ArrayList<>();
+        List<Line> lines = new ArrayList<>();
+        Line line = new Line();
+        int availableWidth= maxWidth;
+    
+        // #1
+        int index = 0;
+        while(index < words.length) {
+            int curWordLen = words[index].length();
+            if(availableWidth >= curWordLen) { // have enough width, then add the word to current line
+                line.row.add(words[index]);
+                line.length+= curWordLen;
+                availableWidth-= curWordLen; // width shrink
+                availableWidth-= 1; // for each word, at least have a space to separated each other, so need to take it
+                index++;
+            } else { // if no enough width for current line, then we are done with current line, add it to lines. Then start a new line with full of maxWidth
+                lines.add(line);
+                availableWidth = maxWidth;
+                line = new Line();
+            }
+        }
+        lines.add(line);
+
+        // #2 - traverse each line and calculate the space need to be distributed between each word
+        for(int n = 0; n < lines.size(); n++) {
+            Line row = lines.get(n);
+            int len = row.length; // current line length of all words
+            List<String> list = row.row; // all words in current line
+            int numOfWords = list.size(); 
+            int numberOfSpace = maxWidth - len; // # of space need to be distributed
+            
+            // separeted space between words = # of words - 1 e.g 3 words have two seprated space between. if only one word in the line, then all spaces should be allocated to the end of this word
+            int aveSpaceBetweenWords = numOfWords == 1 ? numberOfSpace : numberOfSpace/(numOfWords - 1); 
+            // if numberOfSpace cannot be evenly distributed, then cal the remainder, and allocated the remainder from left to right - "If the number of spaces on a line does not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right."
+            int remainder = numOfWords == 1 ? 0 : numberOfSpace % (numOfWords - 1); // if can not distributed evenly
+            // # 3
+            // if last line, aveSpaceBetweenWords should be 1, and no remainder situation consideration, just allocate all remaining spaces in the end
+            if(n == lines.size() - 1) {
+                aveSpaceBetweenWords = 1;
+                remainder = 0;
+            }
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < list.size(); i++) {
+                sb.append(list.get(i));
+                if(numberOfSpace > 0) { // add spaces after each word, check numberOfSpace > 0 to make sure not to add spaces to last word of each line
+                    if(remainder > 0) {
+                        addSpace(sb, aveSpaceBetweenWords + 1);
+                        numberOfSpace-= aveSpaceBetweenWords + 1;
+                        remainder--;
+                    } else{
+                        numberOfSpace-= aveSpaceBetweenWords;
+                        addSpace(sb, aveSpaceBetweenWords);
+                    }
+                }
+                
+            }
+            // #3 - only last line will go here, when numberOfSpace still > 0.
+            // if not last line, the space is already distributed, and numberOfSpace should be 0
+            // if last line, since between each word only have 1 space, so the remaining makes numberOfSpace > 0, so just put remaining numberOfSpace in the end
+            if(numberOfSpace > 0) {
+                addSpace(sb, numberOfSpace);
+            }
+            
+            res.add(sb.toString());
+        }
+
+
+        return res;
+    }
+
+    private void addSpace(StringBuilder sb, int count) {
+        for(int i = 0; i < count; i++) {
+            sb.append(" ");
+        }
+    }
+}
+
+class Line {
+    List<String> row;
+    int length;
+    
+    public Line() {
+        this.length = 0;
+        this.row = new ArrayList<>();
+    }
+}

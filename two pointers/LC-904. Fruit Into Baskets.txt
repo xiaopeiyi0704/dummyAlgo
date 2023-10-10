@@ -1,0 +1,42 @@
+/*observation: 
+1 from left to right(0 to the end)
+2 no skip, have to pick at every index
+3 once picked more than 2 types, have to stop/discard
+*/
+//brute force - try all the different start index from left to right, once meet 3 types fruits then stop - during this process write down the max
+//brute force gives n^2 TC, so not ideal
+//sliding window - start from left to the right, once meet 3 types, then keep dropping the left index one until two types in the basket - during this process write down the max
+//tc: n
+class Solution {
+    public int totalFruit(int[] fruits) {
+        // We use a hash map 'basket' to store the number of each type of fruit.
+        Map<Integer, Integer> basket = new HashMap<>();
+        int left = 0;
+        int right = 0;
+        int maxPicked = 0;
+        
+        while(right < fruits.length) {
+            int type = fruits[right];
+            right++;
+            // Add fruit from the right index (right) of the window.
+            basket.put(type, basket.getOrDefault(type, 0) + 1);
+            
+            // If the current window has more than 2 types of fruit,
+            // we remove fruit from the left index (left) of the window,
+            // until the window has only 2 types of fruit.
+            while (basket.size() > 2) {
+                basket.put(fruits[left], basket.get(fruits[left]) - 1);
+                if (basket.get(fruits[left]) == 0) {
+                    basket.remove(fruits[left]);
+				}
+                left++;
+            }
+            
+            // Update maxPicked.
+            maxPicked = Math.max(maxPicked, right - left);
+        }
+      
+        return maxPicked;
+    }
+}
+

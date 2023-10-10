@@ -1,0 +1,41 @@
+// tc: nlogn sort + nlogn pq
+// sc: n for pq
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        
+        // sorted by start time, then we can compare each interval easily later, also meeting starts based on the start time
+        Arrays.sort(intervals, (a, b) -> a[0] - b[0]); 
+        // to track overlap intervals(add ovlerlap intervals in this pq) 
+        // sorted by end time(top interval end sooner), then we can compare top interval with next start interval - if no overlap, then we can pop it
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[1] - b[1]); 
+        
+        int count = 1; // at least need 1 meeting room
+        int max = 1; // at least need 1 meeting room
+        
+        int start = intervals[0][0];
+        int end = intervals[0][1];
+        
+        for(int i = 1; i < intervals.length; i++) {
+            int curStart = intervals[i][0];
+            int curEnd = intervals[i][1];
+            
+            // pop all intervals in pq if there is no overlap with current interval - just release those rooms
+            while(!pq.isEmpty() && pq.peek()[1] <= curStart) {
+                pq.poll();
+                count--;
+            }
+            
+            // check prev and current if overlap, if overlap then add prev interval to pq since need 1 more room
+            if(curStart < end && start < curEnd) {
+                pq.add(new int[]{start, end});
+                count++;
+                max = Math.max(max, count);  // track max # of room being used at all time
+            }
+           
+            start = curStart;
+            end = curEnd;
+        }
+        
+        return max;
+    }
+}

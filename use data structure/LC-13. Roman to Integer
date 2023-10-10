@@ -1,0 +1,44 @@
+// create a mapping relationship between symbol to value
+// symbol can be 1 char or 2 chars - we need to "look ahead" for the next char to make sure current symbol is consisted by 1 or 2 chars as a symbol
+// get the value based on each symbol and add them up
+// tc: n
+// sc: 1
+class Solution {
+    static Map<String, Integer> map = new HashMap<>();
+
+    static {
+        map.put("I", 1);
+        map.put("IV", 4);
+        map.put("V", 5);
+        map.put("IX", 9);
+        map.put("X", 10);
+        map.put("XL", 40);
+        map.put("L", 50);
+        map.put("XC", 90);
+        map.put("C", 100);
+        map.put("CD", 400);
+        map.put("D", 500);
+        map.put("CM", 900);
+        map.put("M", 1000);
+    }
+    public int romanToInt(String s) {
+
+        
+        int index = 0;
+        int res = 0;
+        while(index < s.length()) {
+            if(index + 2 <= s.length() && map.containsKey(s.substring(index, index + 2))) {
+                res+= map.get(s.substring(index, index + 2));
+                index+= 2;
+            } else {
+                res+= map.get(s.substring(index, index + 1));
+                index+= 1;
+            }
+
+        }
+
+        return res;
+    }
+    
+   
+}

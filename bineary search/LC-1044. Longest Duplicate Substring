@@ -1,0 +1,73 @@
+/*
+hash() : computes hash for a given string
+nextHash() : computes next hash by removing first letter and adding next letter
+getDup() : returns a duplicate string for a given window size
+
+Here i chose 31 as the prime number for helping with hash
+*/
+// tc: nlogn
+// sc: n
+class Solution {
+    Map<Long, Integer> map = new HashMap<>();
+    int start = -1;
+    int end = -1;
+    public String longestDupSubstring(String s) {
+        int left = 1;
+        int right = s.length() - 1;
+        while(left <= right) {
+            int mid = left + (right - left) / 2;
+            int[] pos = isPossible(s, mid);
+            if(pos[0] != -1) {
+                start = pos[0];
+                end = pos[1];
+                
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return start == -1 ? "" : s.substring(start, end + 1);
+    }
+    
+    private int[] isPossible(String s, int size) {
+        long hashValue = hash(s.substring(0, size));
+		
+        HashSet<Long> set = new HashSet();
+        set.add(hashValue);
+
+        long pow = 1;
+        for(int p = 1; p < size; p++){
+			 pow = (pow * 31);	
+		}
+           
+		int n = s.length();
+        for(int right = size; right < n; right++){
+            hashValue = nextHash(pow, hashValue, s.charAt(right-size), s.charAt(right));
+            if(!set.add(hashValue)){
+				return new int[]{right - size + 1, right};
+            }
+        }
+
+        
+        return new int[]{-1, -1};
+    }
+	
+	 private long hash(String s){
+        long h = 0;
+        long a = 1;
+        
+		int n = s.length();
+        for(int k = n; k >= 1; k--){
+            char ch = s.charAt(k - 1);
+            h+= (ch - 'a' + 1) * a;
+            a = (a * 31);
+        }
+        
+        return h;
+    }
+    
+    private long nextHash(long pow,long hash,char left,char right){
+        return (hash - (left - 'a' + 1) * pow) * 31 + (right - 'a' + 1);
+    }
+}

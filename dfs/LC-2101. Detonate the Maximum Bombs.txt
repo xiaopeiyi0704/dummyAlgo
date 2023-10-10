@@ -1,0 +1,131 @@
+// DFS
+// 1 build graph - start from current bomb - bombs[i] and then connect all other bombs it can reach via Eucilidean distance
+// 2 start from each node in the graph to traverse the whole path in dfs and count the # of nodes in the path
+// 3 the path with max nodes is the result
+// tc: buildGraph is n^2, each traverse is e + v, traverse n times, which is n(e + v). total is n^2 + n(e + v)
+class Solution {
+    int max = 0;
+    int count = 0;
+    boolean[] visited;
+    public int maximumDetonation(int[][] bombs) {
+        // #1
+        List<Integer>[] graph = buildGraph(bombs);
+        
+        // #2
+        for(int i = 0; i < bombs.length; i++) {
+            visited = new boolean[bombs.length]; // visited to avoid duplicate visit
+            dfs(graph, i, visited);
+            // #3
+            max = Math.max(max, count);
+            count = 0;
+        }
+        
+        return max;
+    }
+    
+    private void dfs(List<Integer>[] graph, int v, boolean[] visited) {
+        if(visited[v]) return;
+        
+        visited[v] = true;
+        count++;
+        for(int node: graph[v]) {
+            dfs(graph, node, visited);
+        }
+    }
+    
+    private List<Integer>[] buildGraph(int[][] bombs) {
+        List<Integer>[] graph = new List[bombs.length];
+        int m = bombs.length;
+        int n = bombs[0].length;
+        for (int i = 0; i < m; i++) {
+            graph[i] = new ArrayList<Integer>();        
+            for (int j = 0; j < m; j++) {
+                if (i == j) continue;
+
+                if (isOverlap(bombs[i], bombs[j])) {
+                    graph[i].add(j);
+                }
+            }
+        }
+        
+        return graph;
+    }
+    
+    private boolean isOverlap(int[] a, int[] b) {
+        return Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2) <= Math.pow(a[2], 2);
+    }
+}
+
+/*
+// BFS
+// 1 build graph - start from current bomb - bombs[i] and then connect all other bombs it can reach via Eucilidean distance
+// 2 start from each node in the graph to traverse the whole path in bfs and count the # of unique nodes ever add to the queue(# of unique nodes can be referenced from start node) 
+// 3 track the max for reslut
+// tc: buildGraph is n^2, each traverse is e + v, traverse n times, which is n(e + v). total is n^2 + n(e + v)
+class Solution {
+    int max = 1;
+    int count = 0;
+    boolean[] visited;
+    public int maximumDetonation(int[][] bombs) {
+        // #1
+        List<Integer>[] graph = buildGraph(bombs);
+        
+        // #2
+        for(int i = 0; i < bombs.length; i++) {
+            if(graph[i].size() > 0) {
+                visited = new boolean[bombs.length]; // visited to avoid duplicate visit
+                bfs(graph, i, visited);
+                // #3
+                max = Math.max(max, count);
+                count = 0;
+            }
+           
+        }
+        
+        return max;
+    }
+    
+    private void bfs(List<Integer>[] graph, int start, boolean[] visited) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(start);
+        visited[start] = true;
+        count++;
+        while(!q.isEmpty()) {
+           // int size = q.size();
+           // for(int i = 0; i < size; i++) {
+                int cur = q.poll();
+                for(int node: graph[cur]) {
+                    if(!visited[node]) {
+                        count++;
+                        q.add(node);
+                        visited[node] = true;
+                    }
+                }
+           // }
+        }
+
+    }
+    
+    private List<Integer>[] buildGraph(int[][] bombs) {
+        List<Integer>[] graph = new List[bombs.length];
+        int m = bombs.length;
+        int n = bombs[0].length;
+        for (int i = 0; i < m; i++) {
+            graph[i] = new ArrayList<Integer>();        
+            for (int j = 0; j < m; j++) {
+                if (i == j) continue;
+
+                if (isOverlap(bombs[i], bombs[j])) {
+                    graph[i].add(j);
+                }
+            }
+        }
+        
+        return graph;
+    }
+    
+    private boolean isOverlap(int[] a, int[] b) {
+        return Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2) <= Math.pow(a[2], 2);
+    }
+}
+*/

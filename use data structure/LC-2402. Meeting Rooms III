@@ -1,0 +1,56 @@
+// tc: nlogn for sorting, pq nlogn, total is nlogn
+// sc: count[] n, 2 pqs total is n, n + n total is n
+class Solution {
+    public int mostBooked(int n, int[][] meetings) {
+        // to track # of use of each room
+        int[] count = new int[n]; 
+        // min heap to store room to make sure smallest available room index on the top to be use
+        PriorityQueue<Integer> available = new PriorityQueue<>((a, b) -> a - b);
+        // min heap to store room is being used, sorted by end time. if no room available, then pop earliest end meeting/room to be use
+        PriorityQueue<int[]> inUse = new PriorityQueue<>((a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        
+        // enqeue
+        for(int i = 0; i < n; i++) {
+            available.add(i);
+        }
+        
+        // sort the meetings based on start time sequence
+        Arrays.sort(meetings, (a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
+        
+        // traverse meetings
+        for(int i = 0; i < meetings.length; i++) {
+            int curStart = meetings[i][0];
+            int curEnd = meetings[i][1];
+            
+            // if there is any room/meeting can be released(already done), just release the rooms to make them available
+            while(inUse.size() > 0 && inUse.peek()[0] <= curStart) {
+                available.add(inUse.poll()[1]);
+            }
+            
+            // if there is available room, just use it
+            if(available.size() > 0) {
+                int room = available.poll();
+                count[room]+= 1; // mark usage
+                inUse.add(new int[]{curEnd, room}); // add to inUse pq
+            } else { // if no room available, then release the earliest end/finish time one
+                int[] roomInUse = inUse.poll(); // release the top one, which has least end time(earliest finish)
+                int delay = roomInUse[0] - curStart; // calculate the delay time to "re-value" current end time
+                curEnd+= delay; // "re-value" current end time
+                count[roomInUse[1]]+= 1; // mark usage
+                inUse.add(new int[]{curEnd, roomInUse[1]}); // add to inUse pq (the released room is used again)
+            }
+        }
+        
+        int maxIndex = 0;
+        int maxCount = 0;
+        // traverse the usage of all rooms to get the index of max used one
+        for(int i = 0; i < n; i++) {
+            if(count[i] > maxCount) {
+                maxCount = count[i];
+                maxIndex = i;
+            }
+        }
+        
+        return maxIndex;
+    }
+}

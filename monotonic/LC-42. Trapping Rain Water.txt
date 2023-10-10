@@ -1,0 +1,65 @@
+// monotonic stack
+// to carry water, we assume the place can get later is a basin.
+// keep decrease in the stack, once see a larger number, then we know the "basin" formed(accumlate water), then we calculate the accumlated water in the basin
+// when see a larget number, it is the right "wall", previous is the basin part for carrying water, then we need to find the left "wall"
+// how much water the basin can carry? depends on the min "wall" between left and right, and the height of basin 
+// e.g 2, 1, 4 - left  wall is 2, right wall is 4, the basin height is 1, the water is min(2, 4) - 1
+// why monotonic stack? we start from left wall, keep decrease to form the basin, if see increase it means we reach right wall for current basin
+// tc: n
+// sc: n
+class Solution {
+    public int trap(int[] height) {
+        Deque<Integer> deque = new LinkedList<>();
+        
+        for(int rightIndex = 0; rightIndex < height.length; rightIndex++) {
+            while(deque.size() > 0 && height[deque.getLast()] <= height[rightIndex]) { // once see right wall
+                int midIndex = deque.removeLast(); 
+                int midValue = height[midIndex]; // get mid height value
+                int rightVal = height[rightIndex]; // get right height value
+                if(deque.size() > 0) { // if there is a left wall. if deque is empty, then no left wall, no wall then cannot carry water
+                    int leftIndex = deque.getLast(); 
+                    int leftValue = height[leftIndex]; // get left height value
+
+                    int val = Math.min(height[rightIndex], leftValue) - midValue; // e.g 2, 1, 4 - left  wall is 2, right wall is 4, the basin height is 1, the water is min(2, 4) - 1
+                    sum+= val * (rightIndex - leftIndex - 1); // calculate the width of the basin
+                }
+                
+            }
+            
+            deque.addLast(rightIndex); 
+        }
+        return sum;
+    }
+}
+
+/*
+// how much water can carry by current position(height[i]), depends on the its left max height and its right max height
+// "current water" = min(lmaxheight, rmaxright) - height[current]
+// addup  all above "current water"
+// tc: n
+// sc: n
+class Solution {
+    public int trap(int[] height) {
+        int[] lmax = new int[height.length];
+        int[] rmax = new int[height.length];
+        
+        lmax[0] = height[0];
+        for(int i = 1; i < height.length; i++) {
+            lmax[i] = Math.max(lmax[i - 1], height[i]);
+        }
+        
+        rmax[height.length - 1] = height[height.length - 1];
+        for(int i = height.length - 2; i >= 0; i--) {
+            rmax[i] = Math.max(rmax[i + 1], height[i]);
+        }
+        
+        int sum = 0;
+        for(int i = 1; i < height.length - 1; i++) {
+            sum+= Math.min(lmax[i], rmax[i]) - height[i];
+        }
+        
+        return sum;
+    }
+}
+
+*/
