@@ -33,6 +33,14 @@ class Solution {
         
         int[][] res = list.toArray(new int[0][0]);
         
+		/* more code but faster
+		        int index = 0;
+        for(int[] i: list) {
+            res[index] = i;
+            index++;
+        }
+        
+		*/
         return res;
     }
 }

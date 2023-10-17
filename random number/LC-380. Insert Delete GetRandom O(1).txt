@@ -1,0 +1,57 @@
+// requirement - O(1) TC
+// what the random number should be? - this random range has to be number of items we have now - so the random number becomes index
+// when we store items in list or map, we also mark the item's index(order). But what if an item is removed. then we get a gap. 
+//  e.g list value 2, 3, null, 8, 1
+//      list index 0  1   2    3  4
+// the issue of gap 
+    // - 1 if has gap - if random number/index is the gap number, then we cannot get the item, have to try again - not O(1) anymore
+    // - 2 if remove gap- if each time we remove an item, we do not want/allow gap, and we remove the item and connect the next/following ones - connect following ones not O(1) anymore. 
+
+// how to NO gap, but connect following ones is O(1)? 
+//  - when remove an item, find its index in the list
+//  - put last item value of the list in the index to be removed
+//  - remove last item of the list - remove last one is O(1), since no following/next item anymore
+// how to quick find its index? - hash map 
+class RandomizedSet {
+    List<Integer> list;
+    Map<Integer, Integer> valueToIndex;
+    public RandomizedSet() {
+        list = new ArrayList<>();
+        valueToIndex = new HashMap<>();
+    }
+    
+    public boolean insert(int val) {
+        if(valueToIndex.containsKey(val)) return false;
+        
+        valueToIndex.put(val, list.size());
+        list.add(val);
+        
+        return true;
+    }
+    
+    public boolean remove(int val) {
+        if(valueToIndex.containsKey(val)) {
+            // get the index of the item to be removed
+            int index = valueToIndex.get(val);
+            // get last item in the list
+            int lastItem = list.get(list.size() - 1);
+            // put last item value of the list in the index to be removed
+            list.set(index, lastItem);
+            // remove last item
+            list.remove(list.size() - 1);
+            
+            // update map
+            valueToIndex.put(lastItem, index); // update lastItem index
+            valueToIndex.remove(val); // remove the removed val from map
+            
+            return true;
+        } 
+        return false;
+    }
+    
+    public int getRandom() {
+        int index = (int)(Math.random() * list.size());
+      
+        return list.get(index);
+    }
+}

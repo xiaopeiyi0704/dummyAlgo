@@ -1,0 +1,62 @@
+// sort to easy find res by given target
+// to achieve n sum, need recursion to solve sub problem
+// base case is two sum
+// deduplication
+// if want to get 5sum e.g [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] then 
+//  1 + all 4sum
+//    2 + all 3sum 
+//      3 + all 2sum
+class Solution {
+
+    public List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums); // sort it for two pointers 
+        
+        return nSum(nums, 0, 3, 0); // 3sum 
+    }
+    
+    private List<List<Integer>> nSum(int[] nums, int start, int n, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        
+        if(n == 2) {
+            return twoSum(nums, start, target);
+        } else {
+            int index = start;
+            while(index < nums.length) {
+                List<List<Integer>> sub  = nSum(nums, index + 1, n - 1, target - nums[index]);
+                for(List<Integer> list: sub) {
+                    list.add(nums[index]);
+                    res.add(list);
+                }
+                while(index + 1 < nums.length && nums[index] == nums[index + 1]) { // deduplication
+                    index++;
+                }
+                index++;
+            }
+        }
+        
+        return res;
+    }
+    
+    // get all the possible 2sums by given target
+    private List<List<Integer>> twoSum(int[] nums, int start, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        int left = start;
+        int right = nums.length - 1;
+        
+        while(left < right) {
+            if(nums[left] + nums[right] == target) {
+                res.add(new ArrayList<Integer>(Arrays.asList(nums[left], nums[right])));
+                while(left + 1 < right && nums[left] == nums[left + 1]) { // deduplication
+                    left++;
+                }
+                left++;
+            } else if(nums[left] + nums[right] > target) {
+                right--;
+            } else {
+                left++;
+            }
+        }
+        
+        return res;
+    }
+}

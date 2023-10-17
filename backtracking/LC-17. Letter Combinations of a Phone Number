@@ -1,0 +1,41 @@
+// return all the possible combinations - backtrack
+// get each char from each number and try same in other numbers
+// how to quickly get all chars at each number - map
+// tc: max of each digit has for chars, then 4^n, where n is length of digits. total is 4^n * n where * n because sb.toString()
+// sc: map size s, recursion call stack s
+class Solution {
+    List<String> res = new ArrayList<>();
+    Map<Character, String> map = new HashMap<>();
+    public List<String> letterCombinations(String digits) {
+        if(digits == null || digits.length() == 0) return res; // corner case
+        
+        map.put('2', "abc");
+        map.put('3', "def");
+        map.put('4', "ghi");
+        map.put('5', "jkl");
+        map.put('6', "mno");
+        map.put('7', "pqrs");
+        map.put('8', "tuv");
+        map.put('9', "wxyz");
+       
+        
+        backtrack(digits, 0, new StringBuilder());
+        
+        return res;
+    }
+    
+    private void backtrack(String digits, int index, StringBuilder sb) {
+        if(index == digits.length()) {
+            res.add(sb.toString());
+            return;
+        }
+        
+        for(int i = 0; i < map.get(digits.charAt(index)).length(); i++ ) {
+            char ch = map.get(digits.charAt(index)).charAt(i);
+            sb.append(ch);
+            backtrack(digits, index + 1, sb);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        
+    }
+}
