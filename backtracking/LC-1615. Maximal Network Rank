@@ -1,0 +1,67 @@
+// tc: n(n - 1)/2 + buildGraph is n + e + traverse n(n - 1)/2 * e
+// sc: graph n + e, recursion call stack 2
+class Solution {
+    List<List<Integer>> subset = new ArrayList<>();
+    public int maximalNetworkRank(int n, int[][] roads) {
+        int max = 0;
+        getSubset(n, 0, new LinkedList<Integer>());
+        List<Integer>[] graph = buildGraph(roads, n);
+        
+        // traverse each city pair
+        for(List<Integer> list: subset) {
+            Set<Integer> set = new HashSet();
+            int count = 0;
+            for(int i = 0; i < 2; i++) { // try start from each city in the pair
+                set.add(list.get(i)); // track start city
+                
+                for(int city: graph[list.get(i)]) {
+                    // end city cannot be a start city
+                    // e.g [0,1] 0 to 1, 1 to 0 are same road/edge - no duplicated count
+                    // to avoid dup, we track start city. once a city is a start city, it cannot be a end city anymore later.
+                    // [0, 1] 0 is start, it can reach 1, so count++. then 1 is start, it can reach end city 0, but 0 is start city, it means the same road/edge appear twice. So not count
+                    if(!set.contains(city)) {
+                        count++;
+                    }
+                }
+            }
+            max = Math.max(max, count);
+        }
+        return max;
+    }
+    
+    // build bi-direction graph
+    private List<Integer>[] buildGraph(int[][] roads, int n) {
+        List<Integer>[] graph = new List[n];
+        for(int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        
+        for(int[] road: roads) {
+            int from = road[0];
+            int to = road[1];
+            graph[from].add(to);
+            graph[to].add(from);
+        }
+        
+        return graph;
+    }
+    
+    // find all city pairs
+    /*
+    for 'n choose 2'- We have n ways of selecting the first element, and (n - 1) ways of selecting the second element - so n(n - 1). 
+    However, this way, every subset would be counted twice over such as {A, B} and {B, A}.
+    if no dup like this then -  n choose 2' is half this number - n(n - 1)/2
+    */
+    private void getSubset(int n, int index, LinkedList<Integer> list) {
+        if(list.size() == 2) {
+            subset.add(new ArrayList<>(list));
+            return;
+        }
+        
+        for(int i = index; i < n; i++) {
+            list.add(i);
+            getSubset(n, i + 1, list);
+            list.removeLast();
+        }
+    }
+}

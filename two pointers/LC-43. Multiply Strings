@@ -1,0 +1,42 @@
+// two digits multiply, result length is at most n1 + n2. e.g 9 * 9 at most 2 digits
+// digit at i * digit at j(e.g 2 * 9) - the result (1 and 8) is at i + j and i + j + 1 indexes at res[].
+// tc: n1 * n2 + (n1 + n2)
+// sc: n1 + n2
+class Solution {
+    public String multiply(String num1, String num2) {
+        if(num1 == null || num1.equals("0") || num1.length() == 0 || num2 == null || num2.equals("0") || num2.length() == 0) return "0";
+        
+        int n1 = num1.length();
+        int n2 = num2.length();
+        
+        // two digits multiply, result length is at most n1 + n2. e.g 9 * 9 at most 2 digits
+        int[] res = new int[n1 + n2];
+        
+        for(int i = n1 - 1; i >= 0; i--) {
+            for(int j = n2 - 1; j >= 0; j--) {
+                int product = (num1.charAt(i) - '0') * (num2.charAt(j) - '0');
+                
+                // digit at i * digit at j(e.g 2 * 9) - the result (1 and 8) is at i + j and i + j + 1 indexes at res[]. 
+                res[i + j + 1]+= product;
+                if(res[i + j + 1] > 9) {
+                    res[i + j] += res[i + j + 1] / 10;
+                    res[i + j + 1] = res[i + j + 1] % 10;
+                }
+                
+            }
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        while(index < res.length) {
+            if(index == 0 && res[index] == 0) { // remove leading 0 if exists
+                index++;
+                continue;
+            }
+            sb.append(res[index]);
+            index++;
+        }
+        
+        return sb.toString();
+    }
+}

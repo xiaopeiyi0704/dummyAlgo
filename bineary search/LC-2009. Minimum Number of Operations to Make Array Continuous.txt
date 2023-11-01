@@ -1,0 +1,101 @@
+// unqiue - use set track
+// to keep array continuous, we need to modify elements in the array, which are not in the range
+// how to define the range - if starts from index 0, then the range is nums[0] to nums[0 ] + nums.length - 1 - so all the elements not in this range need to be modified
+// how to get min modification? - try to start from all indexes, see which one has most elements in the range - has most in range means least modification
+// to do this - brute force is n^2 - try start from each index and traverse the array n * n
+// to do this - sliding window is n - try start from each index(left), each time not traverse the whole array, traverse until it is not valid(right)
+//              each time meets invalid(right), count the elements in the window and left++(starts from next index/left)
+//              check new left/index if valid for the current right - if left to right - 1 is valid, then left + 1 to right -1 is also valid. So NO need to check left + //              1 to right -1 anymore - that is optimization part
+//                  -if new left is valid, move right until not valid - count the window size
+//                  -if new left is invalid, left++, try another start
+// TC: nlogn. sort nlgn, sliding window n
+// SC: list n, set n
+class Solution {
+    public int minOperations(int[] nums) {
+        
+        Set<Integer> set = new HashSet<>(); // track unique item
+        List<Integer> list = new ArrayList<>(); 
+        int len =  nums.length;
+        
+        for (int num : nums) {
+            if(set.contains(num)) continue;
+            set.add(num);
+        }
+         
+        int[] newNums = new int[set.size()];
+        int index = 0;
+        for (int num : set) {
+            newNums[index++] = num;
+        }
+        
+        Arrays.sort(newNums);
+        
+        int maxWindowSize = 0;
+        
+        int right = 0;
+        for (int left = 0; left < newNums.length; left++) {
+            while(right < newNums.length && newNums[right] < newNums[left] + len){
+                right++;
+            }
+            maxWindowSize = Math.max(maxWindowSize, right - left);
+        }
+        
+        return nums.length - maxWindowSize; // the ones not in window that need operation
+    }
+}
+
+// similar as above just use binary search for the right pointer
+/*
+    while(right < newNums.length && newNums[right] < newNums[left] + len){
+        right++;
+    }
+*/
+// tc: n + n + nlogn sort + nlogm
+/*
+class Solution {
+    public int minOperations(int[] nums) {
+        int n = nums.length;
+        int ans = n;
+        
+        HashSet<Integer> unique = new HashSet<>();
+        for (int num : nums) {
+            unique.add(num);
+        }
+        
+        int[] newNums = new int[unique.size()];
+        int index = 0;
+        
+        for (int num : unique) {
+            newNums[index++] = num;
+        }
+            
+        Arrays.sort(newNums);
+        
+        for (int i = 0; i < newNums.length; i++) {
+            int left = newNums[i];
+            int right = left + n - 1;
+            int j = binarySearch(newNums, right);
+            int count = j - i;
+            ans = Math.min(ans, n - count);
+        }
+        
+        return ans;
+    }
+    
+    public int binarySearch(int[] newNums, int target) {
+        int left = 0;
+        int right = newNums.length;
+        
+        while (left < right) {
+            int mid = (left + right) / 2;
+            if (target < newNums[mid]) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        
+        return left;
+    }
+}
+*/

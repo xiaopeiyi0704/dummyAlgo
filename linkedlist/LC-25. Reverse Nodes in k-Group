@@ -1,0 +1,56 @@
+// tc: n - traversed the  whole list once and reverse it
+// sc: recurstion call n
+class Solution {
+
+    ListNode next; // first node of the group to be reverse
+    ListNode prev; // last node of the reversed group
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if(head == null || k == 1) return head; // if empty list or k == 1(no need reverse) just return
+        
+        // count if has enough node to be reversed
+        int count = 0; 
+        ListNode ptr = head;
+        while(ptr != null) {
+            count++;
+            if(count == k) break;
+            ptr = ptr.next;
+        }
+        // if not enough node, just return current head - keep current order
+        if(count < k) return head;
+        
+        // if there are enough node, start reverse
+        // why k - 1? - because we stop at the last node of the group
+        // return value node is reversed group head
+        ListNode node = reverse(head, k - 1);
+        
+        // after reverse, then continue for next group
+        // prev is the last node of the reversed group - so nuse prev.next to check if there is next group e.g prev could be the last node of the linked list
+        if(prev.next != null) {
+            // if there is more node, then keep going
+            // reverseKGroup returns head of each reversed group, so prev.next points to next reversed group head
+            prev.next = reverseKGroup(prev.next, k);
+        }
+        
+        // return the head of each reversed group
+        // if it is the first group, then return value is the head of the whole linked list after reverse
+        return node;
+    }
+    
+    private ListNode reverse(ListNode head, int k) {
+        // base case - once reach to the reverse point - the kth node in the group
+        if(head != null && k == 0) {
+            next = head.next; // write down next group's head(start point)
+            return head; // return new head after reverse - stop/last node is the new head of each group
+        }
+      
+        ListNode node = reverse(head.next, k - 1);
+        
+        head.next.next = head; // reverse
+        head.next = next; // pass the next group's head to previous node. in the end, the head/1st node before reverse's next point to next group head
+        prev = head; // prev finally is the last node of the reversed group
+        // in the end - prev is last node of the group after reverse
+        // in the end - next is prev.next, which is next group's head
+
+        return node; // overall - return the new head of each group
+    }
+}

@@ -1,0 +1,88 @@
+// ugly but works well :)
+// why divideList does not contain 10, instead we use 1 to do for 10? - we can decode 1 - 99 directly e.g 31 = 30 + 1, no need to divide 10 again.
+// tc: O(1) - everything is constant value
+// tc: O(1) - everything is constant predefined space
+class Solution {
+    public String numberToWords(int num) {
+        if(num == 0) return "Zero";
+        
+        Map<Integer, String> map = new HashMap<>();
+        map.put(1000000000, "Billion");
+        map.put(1000000, "Million");
+        map.put(1000, "Thousand");
+        map.put(100, "Hundred");
+        map.put(90, "Ninety");
+        map.put(80, "Eighty");
+        map.put(70, "Seventy");
+        map.put(60, "Sixty");
+        map.put(50, "Fifty");
+        map.put(40, "Forty");
+        map.put(30, "Thirty");
+        map.put(20, "Twenty");
+        map.put(19, "Nineteen");
+        map.put(18, "Eighteen");
+        map.put(17, "Seventeen");
+        map.put(16, "Sixteen");
+        map.put(15, "Fifteen");
+        map.put(14, "Fourteen");
+        map.put(13, "Thirteen");
+        map.put(12, "Twelve");
+        map.put(11, "Eleven");
+        map.put(10, "Ten");
+        map.put(9, "Nine");
+        map.put(8, "Eight");
+        map.put(7, "Seven");
+        map.put(6, "Six");
+        map.put(5, "Five");
+        map.put(4, "Four");
+        map.put(3, "Three");
+        map.put(2, "Two");
+        map.put(1, "One");
+        
+		// use list instead of set - because it keep insertion order
+        List<Integer> divideList = new ArrayList<>();
+        divideList.add(1000000000);
+        divideList.add(1000000);
+        divideList.add(1000);
+        divideList.add(100);
+        divideList.add(1);// why divideList does not contain 10, instead we use 1 to do for 10? - we can decode 1 - 99 directly e.g 31 = 30 + 1, no need to divide 10 again.
+        
+        List<Integer> quotDivideList = new ArrayList<>();
+        quotDivideList.add(100);
+        quotDivideList.add(1);
+        
+        StringBuilder sb = new StringBuilder();
+        
+        for(int divider: divideList) {
+            if(num < divider) continue;
+            
+            int quot = num / divider;
+            num = num % divider;
+            // the result - quot also need to be properly represented like 123,000, when 123000 / 1000 = 123, we need to do "One Hundred Twenty Three" + "thousand"
+            for(int quotDivider: quotDivideList) {
+                if(quot < quotDivider) continue;
+                
+                if(quotDivider == 100) {   
+                    int q = quot / quotDivider;
+                    quot = quot % quotDivider;
+                    sb.append(map.get(q)).append(" ").append(map.get(quotDivider)).append(" ");
+                } else {
+                    int q = quot / quotDivider;
+                    if(q >= 20) {
+                        int tenInt = q / 10 * 10;
+                        sb.append(map.get(tenInt)).append(" ");
+                        if(q - tenInt > 0) sb.append(map.get(q - tenInt)).append(" ");
+                        
+                    } else {
+                        sb.append(map.get(q)).append(" ");
+                    }
+                }
+            }
+            
+            if(divider != 1) sb.append(map.get(divider)).append(" ");
+        }
+        if(sb.charAt(sb.length() - 1) == ' ') sb.deleteCharAt(sb.length() - 1);
+        
+        return sb.toString();
+    }
+}

@@ -1,0 +1,55 @@
+// tc: n
+// sc: recursion stack n
+class Solution {
+    int index = 0;
+    public int calculate(String s) {
+        Stack<Integer> stack = new Stack<>();
+        int num = 0;
+        char sign = '+';
+        
+        while(index < s.length()) {
+            char ch = s.charAt(index);
+            
+            // when see ) means it's time to get out from loop and calculate total in (), and then get out of recursion and return the total
+            if(ch == ')') {
+                break;
+            }
+            // go inside () start the recursion to get the total in ()
+            if(ch == '(') {
+                index++;
+                num = calculate(s);
+            }
+            // if digit, get the number
+            if(Character.isDigit(ch)) {
+                num = num * 10 + (ch - '0'); // e.g 12 = 1 * 10 + 2
+            } 
+            // put the number in the stack when
+            // see a sign - should put current number in stack since the sign you see is for next number
+            // last char in s 
+            // last char in ()
+            if(ch == '+' || ch == '-' || index == s.length() - 1 || (index + 1 < s.length() && s.charAt(index + 1) == ')')) {
+                if(sign == '+') {
+                    stack.add(num);
+                } else {
+                    stack.add(-num);
+                }
+                num = 0;
+                sign = ch;
+            } 
+            // if space is not last char in s, then ignore. if it is last char, then covered by above if
+            if(ch == ' ') {
+                index++;
+                continue;
+            } 
+           
+            index++;
+        }
+        
+        int total = 0;
+        for(int n: stack) {
+            total+= n;
+        }
+        
+        return total;
+    }
+}

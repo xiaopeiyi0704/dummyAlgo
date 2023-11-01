@@ -22,7 +22,7 @@ class Solution {
         //#1 #2
         for (int i = 0; i < dxy.length; i++) {
 			// 1st move starts from current faceto direction and then when i change(when i change, the robot also did robot.turnRight), it clockwise changes direction.
-			// here we want to pick correct element from dxy[][], when robot face to different directions, the left/right/forward/back are different elements in dxy[][](when face down turnRight is the index 3 in dxy, but when face up is the index 1 in dxy)
+			// here we want to pick correct element from dxy[][], when robot face to different directions, the left/right/forward/back are different elements in 5dxy[][](when face down turnRight is the index 3 in dxy, but when face up is the index 1 in dxy)
 			// so when we pick element to calculate nextRow, nextCol value, we need to combine current faceto situation.
             int turnFaceto = (faceto + i) % 4; 
             int nextRow = row + dxy[turnFaceto][0];

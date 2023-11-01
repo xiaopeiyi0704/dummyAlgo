@@ -1,0 +1,40 @@
+// 3*3 board
+// record and check each move
+// player A is 1, player B is -1 - if each row/col/diag/unDiag is 3 means A win, -3 B win
+// row and col need array to record - because there are 3 rows and 3 columns
+// dia and undia only need a number - because only 1 dia and 1 undia
+// if now winner - if all cells are filled then it is a draw, otherwise it is a pending
+// tc: moves.length
+// sc: n
+class Solution {
+    public String tictactoe(int[][] moves) {
+        
+        int n = 3;
+        
+        int[] row = new int[3];
+        int[] col = new int[3];
+        int dia = 0;
+        int unDia = 0;
+        int player = 1;
+        
+        for(int i = 0; i < moves.length; i++) {
+            int x = moves[i][0];
+            int y = moves[i][1];
+            
+            row[x]+= player;
+            col[y]+= player;
+            
+            if(x == y) dia+= player;
+            
+            if(x + y == n - 1) unDia+= player;
+            
+            if(Math.abs(row[x]) == n || Math.abs(col[y]) == n || Math.abs(dia) == n || Math.abs(unDia) == n) {
+                return player == 1 ? "A" : "B";
+            }
+            
+            player= -player;
+        }
+        
+        return moves.length == n * n ? "Draw" : "Pending";
+    }
+}

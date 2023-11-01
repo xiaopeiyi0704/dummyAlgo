@@ -1,0 +1,50 @@
+// reverse whole s and then reverse each word(separated by space)
+// tc: n for reverse  + n for reverse word = n
+// sc: n for stringbuilder
+class Solution {
+    public String reverseWords(String s) {
+        StringBuilder sb = new StringBuilder();
+        
+        // reverse s and put in sb, meanwhile remove trial spaces and extra spaces in the middle
+        for(int i = s.length() - 1; i >= 0; i--) {
+            if(s.charAt(i) != ' ') {
+                sb.append(s.charAt(i));
+            } else {
+                if(i != s.length() - 1 && i != 0 && s.charAt(i + 1) != ' ') {
+                    sb.append(s.charAt(i));
+                }
+            }
+        }
+        // remove leading space - after reverse, leading space is in the end now
+        if(sb.charAt(sb.length() - 1) == ' ') sb.deleteCharAt(sb.length() - 1);
+        
+        // reverse each word
+        int left = 0;
+        int right = 0;
+        int nextStart = 0;
+
+        while(left <= sb.length() - 1) {
+            // find the last char of the word
+            while(right + 1 < sb.length() && sb.charAt(right + 1) != ' ') {
+                right++;
+            }
+            // next word start position + 1 is space, another + 1 is next word start
+            nextStart = right + 2;
+            
+            while(left < right) {
+                char temp = sb.charAt(left);
+                sb.setCharAt(left, sb.charAt(right));
+                sb.setCharAt(right, temp);
+                left++;
+                right--;
+            }
+            
+            // continue, start from next word start
+            left = nextStart;
+            right = nextStart;
+        }
+        
+        
+        return sb.toString();
+    }
+}

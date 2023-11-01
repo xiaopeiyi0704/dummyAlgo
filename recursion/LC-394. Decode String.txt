@@ -1,0 +1,37 @@
+// the pattern could be nested
+// similar like LC-224, just treat[] as () 
+//  - once see "[", then do recursion, "calculate"/get the string inside[] and return.
+//  - after return based on the num value do the repeat
+// tc: n
+// sc: n
+class Solution {
+    int index = 0;
+    public String decodeString(String s) {
+        int num = 0;
+        StringBuilder sb = new StringBuilder();
+        
+        while(index < s.length()) {
+            char ch = s.charAt(index);
+            if(Character.isDigit(ch)) {
+                num = num * 10 + ch - '0'; // accumalate num value like 23 -> 2 * 10 + 3
+                index++;
+            } else if(ch == '[') {
+                index++;
+                String str = decodeString(s);
+                for(int j = 0; j < num; j++) {
+                    sb.append(str);
+                }
+                num = 0;
+            } else if(ch == ']') {
+                index++;
+                return sb.toString();
+            } else {
+                sb.append(ch);
+                index++;
+            }
+            
+        }
+
+        return sb.toString();
+    }
+}

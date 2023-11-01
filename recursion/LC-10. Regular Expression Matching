@@ -1,0 +1,58 @@
+// "*" here is very important. When meet *, you can do 1 repeat prev char OR remove/skip prev char. e.g a*b can be aaaab OR b
+// #1 if two chars are same and next char at p is * - we can repeat current char
+// #2 if two chars are same and next char at p is * - we can remove current char
+// #3 if two chars are same and next char at p is NOT *- we can move forward at both s and p
+// #4 if two chars are not same and next char at p is * - we can remove current char
+// #5 if two chars are not same and next char at p is NOT * - return false
+// tc: 2^(p/2)
+// sc: recursion call stack max(s, p)
+// NOTE*: since this question has options for "decision/path" e.g res = checkMatch(s, p, index1, index2 + 2) || checkMatch(s, p, index1 + 1, index2);
+// so we can use memorization to optimize the tc to s*p. and sc is s*p as well
+class Solution {
+    public boolean isMatch(String s, String p) {
+        return checkMatch(s, p, 0, 0);
+    }
+    
+    private boolean checkMatch(String s, String p, int index1, int index2) {
+        // base case - finish at the same time, then return true e.g s = abc, p = abc
+        if(index1 == s.length() && index2 == p.length()) return true;
+
+        // base case - if s is finish, but p is not. then we can check if remaining chars in p can be all remove/skip
+        // e.g s = abc, p = abcd*e*c*, in this case d*e*c* all can be skip
+        if(index1 == s.length()) {
+            // check the # of chars left in p
+            int count = p.length() - index2;
+            // to remove/skip the remaining, the remaining chars should be char* pair, which should be even number. if not, return false
+            if(count % 2 != 0) return false;
+            // if even number, then check if all in char* format
+            while(index2 < p.length()) {
+                if(p.charAt(index2 + 1) != '*') return false;
+                index2+= 2;
+            }
+            return true;
+        }
+    
+        if(index1 == s.length() || index2 == p.length()) return false;
+        
+        boolean res = false;
+        if(s.charAt(index1) == p.charAt(index2) || p.charAt(index2) == '.') {
+            if(index2 + 1 < p.length() && p.charAt(index2 + 1) == '*') {
+                // #1 if two chars are same and next char at p is * - we can repeat current char - checkMatch(s, p, index1 + 1, index2); only index1 + 1, and index2 stay means we want to repeat the char at current p
+                // #2 if two chars are same and next char at p is * - we can remove current char - checkMatch(s, p, index1, index2 + 2); index2 + 2, and index1 stays means we want to remove/skip the char* pair at current p
+                // either one is true that works and return true
+                res = checkMatch(s, p, index1, index2 + 2) || checkMatch(s, p, index1 + 1, index2);
+            } else {
+                // #3 if two chars are same and next char at p is NOT *- we can move forward at both s and p
+                res = checkMatch(s, p, index1 + 1, index2 + 1);
+            }
+        } else {
+            // #4 if two chars are not same and next char at p is * - we can remove/skip current char at p, index2 + 2 means skip the char* pari
+            if(index2 + 1 < p.length() && p.charAt(index2 + 1) == '*') {
+                res = checkMatch(s, p, index1, index2 + 2);
+                return res;
+            }
+            return false;
+        }
+        return res;
+    }
+}

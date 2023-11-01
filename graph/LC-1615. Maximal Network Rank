@@ -1,0 +1,55 @@
+// tc: n + e + v + n^2 is n^2
+// sc: e + v for graph
+class Solution {
+    public int maximalNetworkRank(int n, int[][] roads) {
+        Set<Integer>[] graph = new Set[n]; // can use set or list, but set search is O(1)
+        for(int i = 0; i < n; i++) {
+            graph[i] = new HashSet<>();
+        }
+        
+        // build the graph - adjcent list - bi-direction
+        for(int[] road: roads) {
+            int from = road[0];
+            int to = road[1];
+            graph[from].add(to);
+            graph[to].add(from);
+        }
+        
+        int max = 0;
+        // try all the possible pair
+        for(int node1 = 0; node1 < n; node1++) {
+            for(int node2 = node1 + 1; node2 < n; node2++) {
+                int count = graph[node1].size() + graph[node2].size();
+                
+                // remove duplicate - if the node in the pair is another node's destination
+                if(graph[node1].contains(node2)) count--;
+                
+                max = Math.max(max, count);
+            }
+        }
+        
+        return max;
+    }
+}
+// Best solution ever!
+class Solution {
+    public int maximalNetworkRank(int n, int[][] roads) {
+        int degree[]=new int[n];
+        boolean connected[][]=new boolean[n][n];
+
+        for(int a[]:roads){
+            degree[a[0]]++;
+            degree[a[1]]++;
+            connected[a[0]][a[1]] =true;
+            connected[a[1]][a[0]]=true;
+        }
+        int temp=0;
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                temp=Math.max(temp,degree[i]+degree[j]-(connected[i][j]?1:0));
+            }
+        }
+
+        return temp;  
+    }
+}

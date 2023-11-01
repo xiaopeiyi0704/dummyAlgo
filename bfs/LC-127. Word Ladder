@@ -1,0 +1,123 @@
+// bfs - get max/min
+// tc: n*ns, n is length of wordList, s is length of each word - findTransferrableWords takes n*s each time, at most n times so n*s
+// sc: n
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        Queue<String> q = new LinkedList<>();
+        int count = 1; // the begin word itself is also counted - based on example
+        
+        q.add(beginWord);
+        //wordList.remove(beginWord); // just in case the wordList contain begin word and cause unneccessary redundant
+        
+        while(!q.isEmpty()) {
+            count++;
+            
+            Queue<String> nextRoundQ = new LinkedList<>();
+            while(!q.isEmpty()) {
+                String cur = q.poll();
+                //wordList.remove(cur);
+                Set<String> transferableList = findTransferrableWords(wordList, cur);
+                for(String word: transferableList) {
+                    if(word.equals(endWord)) {
+                        return count;
+                    }
+                    nextRoundQ.add(word);
+                }
+            }
+            q = nextRoundQ;
+        }
+        
+        return 0;
+    }
+    
+    private Set<String> findTransferrableWords(List<String> wordList, String curWord){
+        
+        Set<String> temp = new HashSet<>();
+        for(String s: wordList){
+            int difference = 0;
+          
+            for(int i = 0; i< s.length(); i++){
+                if(s.charAt(i) != curWord.charAt(i)){
+                    difference++;
+                }
+                if(difference > 1){
+                    continue;
+                }
+            }
+            
+            if(difference == 1){
+                 temp.add(s);
+            }
+ 
+        }
+        // do not use same word twice, otherwise can be circle
+        // after use it, we can remove it - it is a BFS, after use it, we do not need it anymore
+        for(String s: temp){
+            wordList.remove(s);
+        }
+        return temp;
+    }
+}
+
+/*
+// backtracking 
+// time complexity is too high - TLE
+class Solution {
+    Map<String, Integer> memo = new HashMap<>();
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        if(wordList == null || wordList.size() == 0 && !wordList.contains(endWord)) return 0;
+        
+        int[] used = new int[wordList.size()];
+        //used.add(beginWord);
+        
+        int res = getLength(beginWord, endWord, wordList, used);
+        return res == Integer.MAX_VALUE ? 0 : res;
+    }
+    
+    private int getLength(String cur, String end, List<String> wordList, int[]  used) {
+        if(end.equals(cur)) return 1;
+        
+        String key = getKey(cur, used);
+        if(memo.containsKey(key)) return memo.get(key);
+        
+        int res = Integer.MAX_VALUE;
+        for(int i = 0; i < wordList.size(); i++) {
+            if(used[i] == 1) continue;
+            if(!isTransferable(cur, wordList.get(i))) continue;
+            
+            used[i] = 1;
+            int sub = getLength(wordList.get(i), end, wordList, used);
+            if(sub != Integer.MAX_VALUE) {
+                res = Math.min(res, sub + 1);
+            }
+            used[i] = 0;
+        }
+        
+        memo.put(key, res);
+        return res;
+    }
+    
+    private String getKey(String cur, int[] used) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(cur);
+        sb.append(",");
+        
+        for(int u : used) {
+            sb.append(u);
+        }
+        
+        return sb.toString();
+    }
+    
+    private boolean isTransferable(String cur, String target) {
+        int diff = 0;
+        for(int i = 0; i < cur.length(); i++) {
+            if(cur.charAt(i) != target.charAt(i) && diff == 1) return false;
+            
+            if(cur.charAt(i) != target.charAt(i)) diff++;
+        }
+        
+        return true;
+    }
+}
+*/
