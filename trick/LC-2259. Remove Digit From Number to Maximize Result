@@ -1,0 +1,25 @@
+class Solution {
+    public String removeDigit(String number, char digit) {
+        
+        int index = -1;
+        // When decide to remove?
+        // #1 only appearance
+        // #2 if not 1st appearance, then after remove the value at i, the number should get "bigger"(under 1 digit less situation)
+        //    - get bigger means - i + 1 value bigger than the value at i, so after remove i's value, i + 1 "promoted" to i position and get bigger
+        //    - if value at i + 1 <  value at i, and you remove i's value, then the number becomes smaller after the remove
+        //    - if value at i + 1 == value at i, then we choose remove first appearance of the digit(which is at relative right position)
+        for(int i = number.length() - 1; i >= 0; i--) {
+            if(digit == number.charAt(i) && index == -1) {
+                index = i;
+            } else if(digit == number.charAt(i)) {
+               if(number.charAt(i + 1) - '0' > digit - '0') {
+                   index = i;
+               }
+            } 
+        }
+                
+        String res = index < number.length() - 1 ? number.substring(0, index) + number.substring(index + 1) :  number.substring(0, index);
+        
+        return res;
+    }
+}

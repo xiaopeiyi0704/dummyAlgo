@@ -1,0 +1,55 @@
+// 1 make it larger 
+//  - from right to left, if keep increase then cannot make it larger
+//  - from right to left, if find decrease then switch the one with decreased one e.g 7365421, 6 to 3 is descreased.
+// 2 make sure it is the smallest larger - find decrease then switch the one with decreased one to make it larger, BUT it may be not the smallest larger one
+//  - from the decreased one to right to find the smallest larger digit e.g 7365421, we do not switch 3 and 6, instead start from 3 we look for smallest larger->4
+//  - swap with the smallest larger, and become 7465321
+//  - make sure the whole number is smallest larger. Since initially we search from right to left and stop at 1st decreased digit, then before stop everything is increased, so we need to reverse the increased part 65321 to 12356
+// tc: n
+// sc: n
+class Solution {
+    public int nextGreaterElement(int n) {
+        if(n == Integer.MAX_VALUE) return -1;
+        
+        char[] num = String.valueOf(n).toCharArray();
+
+        int swapIndex = -1;
+        // from right to left, try to find the decrease index. if keep increase then cannot make it larger
+        for(int i = num.length - 1; i >= 1; i--) {
+            if(num[i] - '0' > num[i - 1] - '0') {// from right to left, try to find decrease one
+                swapIndex = i - 1;
+                int smallerLargerPos = -1;
+                // find decrease one, but need to find the smallest larger
+                while( i < num.length && num[i] - '0' > num[swapIndex] - '0') {               
+                    smallerLargerPos = i;
+                    i++;
+                }
+                // swap with the smallest larger
+                char temp = num[swapIndex];
+                num[swapIndex] = num[smallerLargerPos];
+                num[smallerLargerPos] = temp;
+                break;
+            }
+        }
+        // if not find decrease digit, then no way to make the number larget, then return -1;
+        if(swapIndex == -1) return -1;
+        
+        // make sure the whole number is smallest larger. Since initially we search from right to left and stop at 1st decreased digit, then before stop everything is increased, so we need to reverse the increased part 65321 to 12356, to finally make it 7412356
+        if(swapIndex != -1) {
+            int left = swapIndex + 1;
+            int right = num.length - 1;
+            while(left < right) {
+                char temp = num[left];
+                num[left] = num[right];
+                num[right] = temp;
+                left++;
+                right--;
+            }
+        }
+        
+        // if out of int range, return -1
+        if(Long.parseLong(new String(num)) > Integer.MAX_VALUE) return - 1;
+        
+        return Integer.parseInt(new String(num));
+    }
+}

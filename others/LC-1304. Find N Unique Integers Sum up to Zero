@@ -1,0 +1,22 @@
+class Solution {
+    public int[] sumZero(int n) {
+        int[] res = new int[n];
+        
+        int count = n % 2 == 0 ? n : n - 1;
+        int index = 0;
+        int value = 1;
+        
+        while(index < count) {
+            res[index] = value;
+            res[index + 1] = -value;   
+            index+= 2;
+            value+= 1;
+        }
+        
+        if(n % 2 == 1) {
+            res[index] = 0;
+        }
+        
+        return res;
+    }
+}

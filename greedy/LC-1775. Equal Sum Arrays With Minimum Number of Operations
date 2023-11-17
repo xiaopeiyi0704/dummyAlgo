@@ -1,0 +1,121 @@
+// tc: n + n + n + n + 5 = n
+// sc: 6 = O(1)
+class Solution {
+    public int minOperations(int[] nums1, int[] nums2) {
+        int len1 = nums1.length;
+        int len2 = nums2.length;
+        // one's largest possible sum(6 * length) smaller than the other's smallest sum (1 * length), then return -1
+        if(len1 * 6 < len2 || len2 * 6 < len1) return -1;
+           
+        int sum1 = 0;
+        int sum2 = 0;
+        for(int n: nums1) sum1+= n;
+        for(int n: nums2) sum2+= n;
+        
+        int diff = sum1 - sum2;
+
+        if(diff == 0) return 0;
+        
+        return sum1 > sum2 ? getCount(nums1, nums2, diff) : getCount(nums2, nums1, -diff);
+    }
+    
+    
+    private int getCount(int[] biggerSum, int[] smallerSum, int diff) {
+        int res = 0;
+        
+        // for this array - the index is the value that can be substracted e.g frequency[5], 5 means the capability to reduce 5
+        // for this array - the element at each index is the #/frequency that has the capability to reduce the index value
+        // e.g frequency[5] = 3 means there are 3 numbers can reduce 5
+        // e.g frequency[2] = 4 means there are 4 numbers can reduce 2
+        int[] frequency = new int[6];
+        
+        // e.g if n is 2, n can reduce 1 so frequency[1]++. if n is 6, n can reduce 5, then frequency[5]++
+        // you may wonder if n is 6, it can reduce 5, but also can reduce 4, 3, 2, 1, but why we only consider 5?
+        // because question asks minum operation if we can reduce 5 at once, we wont reduce reduce less with more times
+        for(int n: biggerSum) frequency[n - 1]++; 
+        
+        // to make to arrays are same, we can either reduce value from biggerSum array or add value to smallerSum array
+        // this is smallerSum array, to operate on smaller sum array, we want to add. 
+        // e.g if n is 1, which means we can add 5. we do not care about add or reduce 5, we know each operation can operate 5 to make the diff less
+        for(int n: smallerSum) frequency[6 - n]++;
+        
+        // greedy - start from largest add/reduce value to meet minum requirement
+        // we do not need to care about when i == 0; since i == 0 means cannot add/substract anything
+        for(int i = 5; i > 0; i--) {
+            // reduce i, two possibilities
+            // 1 - reduce # of i(e.g requency[5] == 3, reduce 3 times of 5) cannot make diff <= 0
+            // 2 - reduce # of i or reduce less than # of i can make diff <= 0
+            // of course from two possibilities, we take which is less
+            // think about the example frequency[5] = 4, diff is 8
+            // think about another example frequency[5] = 4, diff is 100
+            int count = Math.min(frequency[i], diff / i + (diff % i == 0 ? 0 : 1));
+            
+            res+= count;
+            diff-= i * count;
+            
+            if(diff <= 0) break;
+        }
+        
+        return res;
+    }
+   
+}
+
+/* solution1: my first solution,straightforward(greedy always try to take operation for the one has most space to add/substract), but only beat 5%
+// tc: total1 n1, + total2 n2, + math.abs(total1 - total2)logn(n1 + n2)
+// sc: n1 + n2
+class Solution {
+    public int minOperations(int[] nums1, int[] nums2) {
+        
+        int total1 = 0;
+        int total2 = 0;
+        
+        for(int n: nums1) {
+            total1+= n;
+        }
+        
+        for(int n: nums2) {
+            total2+= n;
+        }
+        int diff = Math.abs(total1 - total2);
+        if(diff == 0) return 0;
+        
+        int count = 0;
+        PriorityQueue<Integer> p1 = new PriorityQueue<>((a, b) -> a - b);
+        PriorityQueue<Integer> p2 = new PriorityQueue<>((a, b) -> b - a);
+        
+        if(total1 < total2) {
+            for(int n: nums1) {
+                p1.add(n);
+            }
+            for(int n: nums2) {
+                p2.add(n);
+            }
+        } else {
+            for(int n: nums1) {
+                p2.add(n);
+            }
+            for(int n: nums2) {
+                p1.add(n);
+            }
+        }
+        if(p1.peek() == 6 || p2.peek() == 1) return -1;
+        
+        while(diff > 0) {
+            if(p2.peek() == 1 && p1.peek() == 6) return -1;
+            if(p2.peek() - 1 > 6 - p1.peek()) {
+                int top = p2.poll();
+                p2.add(1);
+                diff-= top - 1;
+            } else  {
+                int top = p1.poll();
+                p1.add(6);
+                diff-= 6 - top ;
+            } 
+            count++;
+        }
+        
+        return count;
+    }
+}
+*/

@@ -1,0 +1,166 @@
+// bfs
+public class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        if (root == null) return "#";
+        StringBuilder result = new StringBuilder();
+        Queue<TreeNode> q = new LinkedList<>();
+        
+        q.offer(root);
+        
+        while (!q.isEmpty()) {
+
+            int size = q.size();
+            
+            for (int i = 0; i < size; i++) {
+                TreeNode node = q.poll();
+                if(node != null) {
+                    result.append(String.valueOf(node.val)).append(",");
+                    q.offer(node.left);
+                    q.offer(node.right);
+                } else{
+                    result.append("#").append(",");
+                }
+            }
+            
+        }
+        
+        return result.toString();
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        String[] values = data.split(",");;
+        if(values[0].equals("#")) return null;
+
+        Queue<TreeNode> q = new LinkedList<>();
+        TreeNode root = new TreeNode(Integer.parseInt(values[0]));
+        q.offer(root);
+        
+        for (int i = 1; i < values.length; i++) {
+            TreeNode parent = q.poll();
+            if (!values[i].equals("#")) {
+                parent.left = new TreeNode(Integer.parseInt(values[i]));
+                q.offer(parent.left);
+            }
+            if (!values[++i].equals("#")) {
+                parent.right = new TreeNode(Integer.parseInt(values[i]));
+                q.offer(parent.right);
+            }
+        }
+        return root;
+    }
+
+}
+
+/*
+// postorder
+public class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        encode(root, sb);
+        
+        return sb.toString();
+    }
+    
+    // ecoded string is in post order string "left right top"
+    private void encode(TreeNode root, StringBuilder sb) {
+        if(root == null) {
+            sb.append("#").append(",");
+            return;
+        } 
+        
+        encode(root.left, sb);
+        encode(root.right, sb);
+        sb.append(root.val).append(",");
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        String[] nodes = data.split(",");
+        
+        // after put the string in the stack - when pop from stack, the order from "left right top" to "top right left"
+        Stack<String> stack = new Stack<>();
+        for(String node: nodes) {
+            stack.add(node);
+        }
+        
+        return decode(stack);
+    }
+    
+    private TreeNode decode(Stack<String> stack) {
+        if(stack.peek().equals("#")) {
+            stack.pop();
+            return null;
+        }
+        
+        String value = stack.pop();
+        // "top right left"
+        TreeNode root = new TreeNode();
+        root.val = Integer.parseInt(value);
+        
+        root.right = decode(stack);
+        root.left = decode(stack);
+        
+        return root;
+    }
+    
+    
+}
+*/
+
+/*
+// preorder
+public class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        encode(root, sb);
+        
+        return sb.toString();
+    }
+    
+    private void encode(TreeNode root, StringBuilder sb) {
+        if(root == null) {
+            sb.append("#").append(",");
+            return;
+        } 
+        
+        sb.append(root.val).append(",");
+        encode(root.left, sb);
+        encode(root.right, sb);
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        String[] nodes = data.split(",");
+        
+        Queue<String> q = new LinkedList<>();
+        for(String node: nodes) {
+            q.add(node);
+        }
+        
+        return decode(q);
+    }
+    
+    private TreeNode decode(Queue<String> q) {
+        if(q.peek().equals("#")) {
+            q.poll();
+            return null;
+        }
+        
+        String value = q.poll();
+        TreeNode root = new TreeNode();
+        root.val = Integer.parseInt(value);
+        
+        root.left = decode(q);
+        root.right = decode(q);
+        
+        return root;
+    }
+}
+*/

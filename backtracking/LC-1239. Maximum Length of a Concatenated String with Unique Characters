@@ -1,0 +1,65 @@
+
+// tc: 26 * 2^16
+// sc: recursion call stack, 26, letters 26
+class Solution {
+    public int maxLength(List<String> arr) {
+        if(arr == null || arr.size() == 0) return 0;
+        
+        // for check if a character is appeared or not
+        int[] letters = new int[26];
+        return getMaxSub(arr, 0, letters);
+    }
+    
+    private int getMaxSub(List<String> arr, int index, int[] letters) {
+        if(index == arr.size()) return 0;
+        
+        // we have to options, take it or not take it
+        int option1 = 0;
+        int option2 = 0;
+        
+        // if current string is valid for taken(no duplicate), then we try the take it case
+        if(isUnqiue(letters, arr.get(index))) {
+            add(letters, arr.get(index));
+            option1 = getMaxSub(arr, index + 1, letters) + arr.get(index).length();
+            remove(letters, arr.get(index));
+        }
+        
+        // may be not take it is better, we try to skip
+        option2 = getMaxSub(arr, index + 1, letters);
+        
+        //get the better one
+        return Math.max(option1, option2);
+        
+    }
+    
+    // when check is valid/unique, we need to check if the current string itself is unique(e.g accd - itself is not unique this case) 
+    // and also need to check if unique comparing with what already taken 
+    private boolean isUnqiue(int[] letters, String str) {
+        Set<Character> set = new HashSet<>();
+        
+        for(int i = 0; i < str.length(); i++) {
+            if(set.contains(str.charAt(i))) return false;
+            if(letters[str.charAt(i) - 'a'] == 1) return false;
+            
+            set.add(str.charAt(i));
+        }
+        
+        for(int i = 0; i < str.length(); i++) {
+            letters[str.charAt(i) - 'a'] = 1;
+        }
+        return true;
+    }
+    
+    // take a string, mark corresponding char to 1 to indicate existence
+    private void add(int[] letters, String str) {
+        for(int i = 0; i < str.length(); i++) {
+            letters[str.charAt(i) - 'a'] = 1;
+        }
+    }
+    
+    private void remove(int[] letters, String str) {
+        for(int i = 0; i < str.length(); i++) {
+            letters[str.charAt(i) - 'a'] = 0;
+        }
+    }
+}

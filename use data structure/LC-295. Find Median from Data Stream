@@ -1,0 +1,41 @@
+// -split whole set added number into 2 part(during addNum() call) - small and large
+// - small maintain decrese order - max heap
+// - large maintain increase order - min heap
+// - they should either has same number of items, or large has at most 1 more item than small(if odd number of items give to large)
+// - top/min of large part should be equal or greater than the top/max of small part - then the whole thing(when put small and large together) also "ordered"
+// #1 create small and large - min and max heap
+// #2 small and large either have same number of items, or large has at most 1 more item than small(if odd number of items give to large first)
+// #3 top/min of large part should be equal or greater than the top/max of small part
+// tc: nlogn, n is # of addNum call, findMedian each call is 1, total is m. So total is nlogn + m = nlogn
+// sc: n, # of addNum call - total # of number added to small and large
+class MedianFinder {
+    PriorityQueue<Integer> small;
+    PriorityQueue<Integer> large;
+    public MedianFinder() {
+        // #1 create small and large - min and max heap
+        small = new PriorityQueue<>((a, b) -> b - a);
+        large = new PriorityQueue<>();
+    }
+    
+    public void addNum(int num) {
+        // #2 small and large either have same number of items, or large has at most 1 more item than small(if odd number of items give to large first)
+        if(small.size() >= large.size()) {
+            small.add(num);// #3 top/min of large part should be equal or greater than the top/max of small part
+            large.add(small.remove());
+        } else{// #2 small and large either have same number of items, or large has at most 1 more item than small(if odd number of items give to large first)
+            large.add(num);// #3 top/min of large part should be equal or greater than the top/max of small part
+            small.add(large.remove());
+        }
+    }
+    
+    public double findMedian() {
+        // alway give large part first, then either small and large have same number of items or large has one more
+        // if large has one more, the top one is the medium
+        if (large.size() > small.size()) {
+            return large.peek();
+        }
+        // if same number of items, the get both's top ones and cal the average
+        return (large.peek() + small.peek()) / 2.0;
+
+    }
+}

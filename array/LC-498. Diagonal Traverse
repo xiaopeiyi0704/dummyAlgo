@@ -1,0 +1,54 @@
+class Solution {
+    public int[] findDiagonalOrder(int[][] mat) {
+        if(mat == null || mat.length == 0) return new int[]{};
+        
+        int m = mat.length;
+        int n = mat[0].length;
+        int[]  res = new int[m * n];
+        int count = 0;
+        boolean up = true;
+        int row = 0;
+        int col = 0;
+        
+        while(count < res.length) {
+            res[count] = mat[row][col];
+            
+            if(up) {
+                if(row - 1 < 0) {
+                    if(col + 1 < n) {
+                        col+= 1;
+                        up = !up;
+                    } else {
+                        row+= 1;
+                        up = !up;
+                    }
+                } else if(col + 1 >= n) {
+                    row+= 1;
+                    up = !up;
+                } else {
+                    row-= 1;
+                    col+= 1;
+                }
+            } else {
+                if(col - 1 < 0) {
+                    if(row + 1 < m) {
+                        row+= 1;
+                        up = !up;
+                    } else {
+                        col+= 1;
+                        up = !up;
+                    }
+                } else if(row + 1 >= m) {
+                    col+= 1;
+                    up = !up;
+                } else {
+                    row+= 1;
+                    col-= 1;
+                }
+            }
+            count++;
+        }
+        
+        return res;
+    }
+}

@@ -1,0 +1,49 @@
+// tc: (a+b+c)log3
+// sc: O(1) for pq, a + b + c for string builder
+class Solution {
+    public String longestDiverseString(int a, int b, int c) {
+
+        // max heap - try to use the char that has most count
+        PriorityQueue<Wrapper> pq = new PriorityQueue<>((w1, w2) -> w2.count - w1.count);
+        if(a > 0) pq.add(new Wrapper('a', a));
+        if(b > 0) pq.add(new Wrapper('b', b));
+        if(c > 0) pq.add(new Wrapper('c', c));
+        
+        StringBuilder sb = new StringBuilder();
+        
+        while(!pq.isEmpty()) {
+            Wrapper cur = pq.poll();
+            
+            // if 3 same character in a row - add next largest/most one (second most one)
+            if(sb.length() > 1 && sb.charAt(sb.length() - 1) == sb.charAt(sb.length() - 2) && sb.charAt(sb.length() - 1) == cur.ch) {
+                if(pq.isEmpty()) break;
+                
+                Wrapper next = pq.poll();
+                sb.append(next.ch);
+                if(--next.count > 0) {
+                    pq.add(next);
+                }
+            } else { // just add the most one
+                sb.append(cur.ch);
+                cur.count--;
+            }
+            
+            // need to put it back to pq if still available
+            if(cur.count > 0) {
+                pq.add(cur);
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+
+class Wrapper{
+    char ch;
+    int count;
+    
+    public Wrapper(char ch, int count){
+        this.ch = ch;
+        this.count = count;
+    }
+}

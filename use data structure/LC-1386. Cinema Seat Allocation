@@ -1,0 +1,57 @@
+// #1 create map, key is row, value is all seats of that row - an array
+// #2 mark reserved seat as 1. 
+// #3 count available group of each row - since reserved seats is marked with 1. if 4 adjacent are available, then the sum should be 0.
+//    - all possible groups of each row are 2 to 5, 6 to 9, 4 to 7
+//    - 2 to 5, 6 to 9 are "compatible"(if possible we can pick both of them since two ranges no overlap)
+//    - 4 to 7 are overlap with 2 to 5 or 6 to 9. so if pick 4 to 7, then cannot pick anything else.
+//    - so each row at most has two adjacent groups. if possible, of course we pick the most one(2 to 5, 6 to 9), if not possible then try 4 to 7. Otherwise, 0
+// #4 NOTE* - in the map we only track/mark the rows with reserved seat. we do not need to count the rows without reservation.
+// #5 the row without any reservation, we know at most we can get 2 groups, just calculate it and add it.
+// tc: r for reservedSeats length(worst case for r can be 10n - all seats are reserved), n for map size. so total is 
+// r + n * 10, worst case is 10n + 10n = n
+// sc: map 10n worst case
+class Solution {
+    public int maxNumberOfFamilies(int n, int[][] reservedSeats) {
+        // #1 create map, key is row, value is all seats of that row - an array
+        Map<Integer, int[]> map = new HashMap<>();
+
+        for(int[] seat: reservedSeats) {
+            int row = seat[0];
+            int col = seat[1];
+            // #4 in the map we only track/mark the rows with reserved seat
+            map.putIfAbsent(row, new int[11]);
+            // #2 mark reserved seat as 1.
+            map.get(row)[col] = 1;
+        }
+        
+        int count = 0;
+        
+        for(Map.Entry<Integer, int[]> pair: map.entrySet()) {
+            int[] seats = pair.getValue();
+            // #3 count available group of each row
+            count+= getCount(seats);
+        }
+        
+        // #5 the row without any reservation, then we know at most we can get 2 groups, just calculate it and add it.
+        int noReservationRow = n - map.size();
+        
+        return count + noReservationRow * 2;
+    }
+    
+    private int getCount(int[] seats) {
+        //    - all possible groups of each row are 2 to 5, 6 to 9, 4 to 7
+        //    - 2 to 5, 6 to 9 are "compatible"(if possible we can pick both of them since two ranges no overlap)
+        //    - 4 to 7 are overlap with 2 to 5 or 6 to 9. so if pick 4 to 7, then cannot pick anything else.
+        // try to pick the max between the two options
+        return Math.max(countSeat(seats, 2, 5) + countSeat(seats, 6, 9), countSeat(seats, 4, 7));
+    }
+    
+    private int countSeat(int[] seats, int start, int end) {
+        // since reversed seat is marked as 1, so once in the range there is a 1, then it is not possible and return 0
+        for(int i = start; i <= end; i++) {
+            if(seats[i] == 1) return 0;
+        }
+        // if the range is available
+        return 1;
+    }
+}
