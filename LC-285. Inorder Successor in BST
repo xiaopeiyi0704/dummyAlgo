@@ -1,0 +1,49 @@
+// based on BST rule, discard all subtrees <= p.
+// if current node > p, current node could be the result, write it down
+// we need to find the smallest bigger one, so go to found one's left to try to get the smaller bigger one.
+// tc: n
+// sc: 1
+class Solution {
+    
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        
+        TreeNode successor = null;
+        
+        while (root != null) {
+            
+            if (p.val >= root.val) {
+                root = root.right;
+            } else {
+                successor = root;
+                root = root.left;
+            }
+        }
+        
+        return successor;
+    }
+}
+
+// postorder traverse the tree find all the nodes that has bigger value  than p and keep the smallest one
+// tc: n
+// sc: n
+class Solution {
+    TreeNode res = null;
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        
+        postOrder(root, p);
+        
+        return res;
+    }
+    
+    private void postOrder(TreeNode root, TreeNode p) {
+        if(root == null) return;
+        
+        postOrder(root.left, p);
+        postOrder(root.right, p);
+        
+        if((res == null && root.val > p.val) || (res != null && root.val > p.val && root.val < res.val)) {
+            res = root;    
+        }
+    }
+}
+

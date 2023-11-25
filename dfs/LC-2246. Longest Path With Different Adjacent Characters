@@ -1,0 +1,55 @@
+// tc: n
+// sc: n
+class Solution {
+    int res = 1;
+    public int longestPath(int[] parent, String s) {
+        // build graph from one to other(child) nodes
+        List<Integer>[] graph = buildGraph(parent, s);
+        
+        traverse(graph, 0, s);
+        
+        return res;
+    }
+    
+    private int traverse(List<Integer>[] graph, int cur, String s) {
+
+        // start from a node can have multiple children(more than 2)/paths. But only two of them plus this node can be a path.
+        // when we calculate, we pick the max of the two children/paths
+        Integer path1 = 0; 
+        Integer path2 = 0;
+        for(int child: graph[cur]) {
+            // at this mo, we go deeper regardless if adjacent are the same. cannot stop. if stop we will miss the path/result. e.g a->a->b->c->d->e->f, we cannot stop at 2nd a, otherwise, will miss the path after.
+            // so we have to traverse everything and track the best value/result.
+            int len = traverse(graph, child, s);
+            
+            // when adjacent are the same, the only thing we do is skip the calculation part since the dup child part is considered as 0(only cur itself count 1)
+            if(s.charAt(child) == s.charAt(cur)) {
+                continue;
+            }
+            
+            // when we calculate, we pick the max of the two children/paths
+            if(path1 > len) {
+                path2 = Math.max(len, path2);
+            } else {
+                path2 = path1;
+                path1 = len;
+            }
+        }
+        
+        res = Math.max(res, path1 + path2 + 1);
+        return path1 + 1;
+    }
+    
+    private List<Integer>[] buildGraph(int[] parent, String s) {
+        List<Integer>[] graph = new List[parent.length];
+        for(int i = 0; i < graph.length; i++) {
+            graph[i] = new ArrayList<Integer>();
+        }
+        
+        for(int i = 1; i < parent.length; i++) {
+            graph[parent[i]].add(i);
+        }
+        
+        return graph;
+    }
+}
