@@ -1,0 +1,45 @@
+class Solution {
+    public List<String> findRepeatedDnaSequences(String s) {
+        int[] dic = new int[s.length()];
+        for(int i = 0; i < dic.length; i++) {
+            switch(s.charAt(i)) {
+                case 'A':
+                    dic[i] = 0;
+                    break;
+                case 'C':
+                    dic[i] = 1;
+                    break;
+                case 'G':
+                    dic[i] = 2;
+                    break;
+                case 'T':
+                    dic[i] = 3;
+                    break;
+
+            }
+        }
+        
+        List<String> res = new ArrayList<>();
+        Map<Integer, Integer> map = new HashMap<>();
+        
+        int num = 0;
+        int left = 0;
+        int right = 0;
+        
+        while(right < s.length()) {
+            num = num * 4 + dic[right];
+            right++;
+            
+            if(right - left == 10) {
+                if(map.containsKey(num) && map.get(num) == 1) {
+                    res.add(s.substring(left, right));
+                }
+                map.put(num, map.getOrDefault(num, 0) + 1);
+                num = num - dic[left] * (int)Math.pow(4, 9);
+                left++;
+            }
+        }
+        
+        return res;
+    }
+}

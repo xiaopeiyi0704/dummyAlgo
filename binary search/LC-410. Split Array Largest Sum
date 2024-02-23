@@ -1,0 +1,43 @@
+class Solution {
+    public int splitArray(int[] nums, int k) {
+        long left = 0;
+        long right = 0;
+        
+        for(int n: nums) {
+            right+= n;
+        }
+        
+        int res = 0;
+        while(left <= right) {
+            long mid = left + (right - left) / 2;
+            long groups = getGroups(nums, mid);
+            
+            if(groups > k) {
+                left = mid + 1;
+            } else {
+                res = (int)mid;
+                right = mid - 1;
+            }
+        }
+        
+        return res;
+    }
+    
+    private long getGroups(int[] nums, long n) {
+        long groups = 1;
+        long sum = 0;
+        
+        for(int i = 0; i < nums.length; i++) {
+            if(nums[i] > n) return 1000001;
+            
+            if(sum + nums[i] <= n) {
+                sum+= nums[i];
+            } else {
+                sum = nums[i];
+                groups++;
+            }
+        }
+        
+        return groups;
+    }
+}

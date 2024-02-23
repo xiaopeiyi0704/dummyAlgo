@@ -5,7 +5,7 @@ count how many groups
 3 if A = B, B = C, then A = C
 union find!
 */
-//tc: n, find method give O(1) since we compress the path
+//tc: e + v, find method give O(1) since we compress the path
 //sc: n for parent
 class Solution {
     public int countComponents(int n, int[][] edges) {

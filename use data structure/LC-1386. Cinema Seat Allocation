@@ -55,3 +55,38 @@ class Solution {
         return 1;
     }
 }
+
+
+class Solution {
+    public int maxNumberOfFamilies(int n, int[][] reservedSeats) {
+        Map<Integer, int[]> map = new HashMap<>();
+        
+        for(int i = 0; i < reservedSeats.length; i++) {
+            int[] seat = reservedSeats[i];
+            int row = seat[0];
+            int col = seat[1];
+            map.putIfAbsent(row, new int[10]);
+            map.get(row)[col - 1]++;;
+        }
+        
+        int count = 0;
+        int num = 0;
+        for(Map.Entry<Integer, int[]> pair: map.entrySet()) {
+            int[] row = pair.getValue();
+            int[] presum = new int[row.length + 1];
+            for(int i = 1; i < presum.length; i++) {
+                presum[i] = presum[i - 1] + row[i - 1];
+            }
+            
+            if(presum[9] - presum[1] == 0) {
+                count+= 2;
+                continue;
+            }
+            
+            if(presum[5] - presum[1] == 0 || presum[7] - presum[3] == 0 || presum[9] - presum[5] == 0) count++;
+
+        }
+        
+        return count + (n - map.size()) *2;
+    }
+}

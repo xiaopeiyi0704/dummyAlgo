@@ -1,0 +1,88 @@
+class LFUCache {
+    Map<Integer, Integer> keyToValue;
+    Map<Integer, Integer> keyToCount;
+    TreeMap<Integer, LinkedHashSet<Integer>> countToList;
+    int size;
+    public LFUCache(int capacity) {
+        keyToValue = new HashMap<>();
+        keyToCount = new HashMap<>();
+        countToList = new TreeMap<>();
+        size = capacity;
+    }
+    
+    public int get(int key) {
+        if(keyToValue.containsKey(key)) {
+            // get value for return
+            int value = keyToValue.get(key);
+            
+            // update the count for the key
+            int curCount = keyToCount.get(key);
+            keyToCount.put(key, curCount + 1);
+        
+            // update the list for the count
+            LinkedHashSet<Integer> list = countToList.get(curCount);
+            // remove from the list of the oldcount
+            list.remove(key);
+            if(list.size() == 0) {
+                countToList.remove(curCount);
+            }
+            // add to the list for the new count
+            countToList.putIfAbsent(curCount + 1, new LinkedHashSet<Integer>());
+            countToList.get(curCount + 1).add(key);
+            
+            return value;
+        }
+        
+        return -1;
+    }
+    
+    public void put(int key, int value) {
+          if(keyToValue.containsKey(key)) {
+              // update the count for the key
+              int curCount = keyToCount.get(key);
+              keyToCount.put(key, curCount + 1);
+              
+              // update the list for the count
+              LinkedHashSet<Integer> list = countToList.get(curCount);
+              // remove from the list of the oldcount
+              list.remove(key);
+              if(list.size() == 0) {
+                countToList.remove(curCount);
+              }
+              // add to the list for the new count
+              countToList.putIfAbsent(curCount + 1, new LinkedHashSet<Integer>());
+              countToList.get(curCount + 1).add(key);
+              
+          } else {
+              if(size == keyToValue.size()) {
+                  // find the lfu count
+                  int leastCount = countToList.firstKey();
+                  
+                  // there may be multi items for the same lfu(in the list)
+                  LinkedHashSet<Integer> list = countToList.get(leastCount);
+                  // remove the lru one(in the beginning)
+                  int lruKey = list.iterator().next();
+                  list.remove(lruKey);
+                  if(list.size() == 0) {
+                      countToList.remove(leastCount);
+                  }
+                  
+                  // remove the lru related key/value and count
+                  keyToValue.remove(lruKey);   
+                  keyToCount.remove(lruKey);       
+              } 
+              // add the new one
+              keyToCount.put(key, 1);
+              countToList.putIfAbsent(1, new LinkedHashSet<Integer>());
+              countToList.get(1).add(key);
+          }
+          keyToValue.put(key, value);
+    }
+}
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache obj = new LFUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */

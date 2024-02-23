@@ -1,0 +1,120 @@
+//bfs + binery search
+class Solution {
+    public int minimumEffortPath(int[][] heights) {
+        int min = 0;
+        int max = 1000000;
+        
+        int res = 1000000;
+        
+        while(min <= max) {
+            int mid = min + (max - min) / 2;
+            
+            if(bfs(heights, 0, 0, mid)) {
+                res = mid;
+                max = mid - 1;
+            } else {
+                min = mid + 1;
+            }
+        }
+        
+        return res;
+    }
+    
+    private boolean bfs(int[][] heights, int row, int col, int effort) {
+        int m = heights.length;
+        int n = heights[0].length;
+        int[][] dxy = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        boolean[][] visited = new boolean[m][n];
+        visited[row][col] = true;
+        
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[]{row, col});
+        
+        while(!q.isEmpty()) {
+            int[] cur = q.poll();
+            if(cur[0] == m - 1 && cur[1] == n - 1) return true;
+            
+            for(int d = 0; d < dxy.length; d++) {
+                int x = cur[0] + dxy[d][0];
+                int y = cur[1] + dxy[d][1];
+                
+                if(x >= 0 && x < m && y >= 0 && y < n && !visited[x][y] && Math.abs(heights[cur[0]][cur[1]] - heights[x][y]) <= effort) {
+                    visited[x][y] = true;
+                    q.add(new int[]{x, y});
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+}
+/*
+// dijstrua
+class Solution {
+    int[][] dxy = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    public int minimumEffortPath(int[][] heights) {
+        int[][] memo = new int[heights.length][heights[0].length];
+        for(int[] arr: memo) {
+            Arrays.fill(arr, Integer.MAX_VALUE);
+        }
+        
+        memo[0][0] = 0;
+        
+        PriorityQueue<State> pq = new PriorityQueue<>((a, b) -> a.maxEffortFromStart - b.maxEffortFromStart);
+        pq.add(new State(0, 0, 0));
+        
+        while(!pq.isEmpty()) {
+            State cur = pq.poll();
+            int x = cur.x;
+            int y = cur.y;
+            int maxEffortFromStart = cur.maxEffortFromStart;
+            
+            if(x == heights.length - 1 && y == heights[0].length - 1) return memo[x][y];
+            
+            if(maxEffortFromStart > memo[x][y]) continue;
+            
+            for(int[] cell: getAdjcent(heights, x, y)) {
+                int nextX = cell[0];
+                int nextY = cell[1];
+                
+                int toNextEffort = Math.max(memo[x][y], Math.abs(heights[x][y] - heights[nextX][nextY]));
+                
+                // here avoid the duplicate e.g (0, 0) to (0, 1) and (0, 1) to (0, 0), same effort wont be go inside if statement
+                if(toNextEffort < memo[nextX][nextY]) {
+                    memo[nextX][nextY] = toNextEffort;
+                    pq.add(new State(nextX, nextY, toNextEffort));
+                }
+            }
+        }
+        
+        return -1;
+    }
+    
+    private List<int[]> getAdjcent(int[][] matrix, int row, int col) {
+        List<int[]> res = new ArrayList<>();
+        for(int d = 0; d < dxy.length; d++) {
+            int x = row + dxy[d][0];
+            int y = col + dxy[d][1];
+
+            if(x >= 0 && x < matrix.length && y >= 0 && y < matrix[0].length) {
+                res.add(new int[]{x, y});
+            }
+        }
+        
+        return res;
+    }
+}
+
+class State {
+    int x;
+    int y;
+    int maxEffortFromStart;
+    
+    public State(int x, int y, int maxEffortFromStart) {
+        this.x = x;
+        this.y = y;
+        this.maxEffortFromStart = maxEffortFromStart;
+    }
+}
+*/

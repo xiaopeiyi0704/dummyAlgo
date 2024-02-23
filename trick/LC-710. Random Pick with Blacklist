@@ -1,0 +1,42 @@
+class Solution {
+    int useableSize;
+    Map<Integer, Integer> map;
+    public Solution(int n, int[] blacklist) {
+        useableSize = n - blacklist.length;
+        map = new HashMap<>();
+        
+        for(int b: blacklist) {
+            map.put(b, -1);
+        }
+        
+        int last = n - 1;
+        for(int b: blacklist) {
+             
+            if(b >= useableSize) continue;
+            
+            while(map.containsKey(last)) {
+                last--;
+            }
+            
+            map.put(b, last);
+            last--;
+        }
+        
+    }
+    
+    public int pick() {
+        int num = (int)(Math.random() * useableSize);
+        
+        if(map.containsKey(num)) {
+            return map.get(num);
+        }
+        
+        return num;
+    }
+}
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(n, blacklist);
+ * int param_1 = obj.pick();
+ */

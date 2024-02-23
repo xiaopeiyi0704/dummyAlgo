@@ -1,0 +1,71 @@
+// this question is not bidirection
+class Solution {
+    public int networkDelayTime(int[][] times, int n, int k) {
+        List<int[]>[] graph = buildGraph(times, n);
+        
+        int[] memo = new int[n + 1];
+        Arrays.fill(memo, Integer.MAX_VALUE);
+        memo[k] = 0;
+        
+        PriorityQueue<State> pq = new PriorityQueue<>((a, b) -> a.delayFromStart - b.delayFromStart);
+        pq.add(new State(k, 0));
+        
+        //start dijstrua
+        while(!pq.isEmpty()) {
+            State cur = pq.poll();
+            int curId = cur.id;
+            int delayFromStart = cur.delayFromStart;
+            
+            if(delayFromStart > memo[curId]) continue;
+            
+            for(int[] next: graph[curId]) {
+                int nextId = next[0];
+                int toNextDelay = next[1];
+                int fromStartToNextDelay = delayFromStart + toNextDelay;
+                
+                if(fromStartToNextDelay < memo[nextId]) {
+                    memo[nextId] = fromStartToNextDelay;
+                    pq.add(new State(nextId, fromStartToNextDelay));
+                }
+            }
+        }
+        
+        int res = 0;
+        
+        for(int i = 1; i <= n; i++) {      
+            res = Math.max(res, memo[i]);
+        }
+        
+        return res == Integer.MAX_VALUE ? -1 : res;
+        
+    }
+    
+    private List<int[]>[] buildGraph(int[][] times, int n) {
+        List<int[]>[] graph = new List[n + 1];
+        
+        for(int i = 1; i <= n; i++) {
+            graph[i] = new ArrayList<int[]>();
+        }
+        
+        for(int i = 0; i < times.length; i++) {
+            int from = times[i][0];
+            int to = times[i][1];
+            int delay = times[i][2];
+            
+            graph[from].add(new int[]{to, delay});
+        }
+        
+        return graph;
+    }
+}
+
+
+class State {
+    int id;
+    int delayFromStart;
+    
+    public State(int id, int delayFromStart) {
+        this.id = id;
+        this.delayFromStart = delayFromStart;
+    }
+}

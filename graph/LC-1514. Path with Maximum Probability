@@ -1,0 +1,70 @@
+class Solution {
+    public double maxProbability(int n, int[][] edges, double[] succProb, int start_node, int end_node) {
+        List<double[]>[] graph = buildGraph(n, edges, succProb);
+        
+        double[] memo = new double[n];
+        Arrays.fill(memo, 0);
+        memo[start_node] = 1;
+        
+        //dijstrua starts
+        PriorityQueue<State> pq = new PriorityQueue<State>((a, b) -> { return Double.compare(b.probFromStart, a.probFromStart);});
+        pq.add(new State(start_node, 1));
+        
+        while(!pq.isEmpty()) {
+            State cur = pq.poll();
+            int curId = cur.id;
+            double curProbFromStart = cur.probFromStart;
+            
+            if(curId == end_node) return curProbFromStart;
+            
+            // == mean just pick this node up, try start from this point
+            if(curProbFromStart < memo[curId]) continue;
+            
+            for(double[] next: graph[curId]) {
+                int nextId = (int)next[0];
+                double toNextProb = next[1];
+                
+                double probFromStartToNext = curProbFromStart * toNextProb;
+                
+                if(probFromStartToNext > memo[nextId]) {
+                    memo[nextId] = probFromStartToNext;
+                    pq.add(new State(nextId, probFromStartToNext));
+                }
+            }
+        }
+        
+        return 0;
+    }
+    
+    
+    private List<double[]>[] buildGraph(int n, int[][] edges, double[] succProb) {
+        List<double[]>[] graph = new List[n];
+        
+        for(int i = 0; i < n; i++) {
+            graph[i] = new ArrayList();
+        }
+        
+        for(int i = 0; i < edges.length; i++) {
+            int from = edges[i][0];
+            int to = edges[i][1];
+            double prob = succProb[i];
+            
+            graph[from].add(new double[]{to, prob});
+            graph[to].add(new double[]{from, prob});
+        }
+        
+        
+        return graph;
+    }
+    
+}
+
+class State {
+    int id;
+    double probFromStart;
+    
+    public State(int id, double probFromStart) {
+        this.id = id;
+        this.probFromStart = probFromStart;
+    }
+}

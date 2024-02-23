@@ -1,7 +1,7 @@
 // monotonic stack
-// to carry water, we assume the place can get later is a basin.
+// to carry water, we assume the place can get water is a basin.
 // keep decrease in the stack, once see a larger number, then we know the "basin" formed(accumlate water), then we calculate the accumlated water in the basin
-// when see a larget number, it is the right "wall", previous is the basin part for carrying water, then we need to find the left "wall"
+// when see a larger number, it is the right "wall", previous is the basin part for carrying water, then we need to find the left "wall"
 // how much water the basin can carry? depends on the min "wall" between left and right, and the height of basin 
 // e.g 2, 1, 4 - left  wall is 2, right wall is 4, the basin height is 1, the water is min(2, 4) - 1
 // why monotonic stack? we start from left wall, keep decrease to form the basin, if see increase it means we reach right wall for current basin
